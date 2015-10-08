@@ -2,7 +2,31 @@
 
 void nsfw::Window::init(unsigned width, unsigned height)
 {
-	TODO_D("Should create and set an active windowing context. ONLY GLFW! No GL!");
+	bool success = glfwInit();
+	if (!success)
+	{
+		std::cout << "Error initializing GLFW.\n";
+		return;
+	}
+	this->width = width;
+	this->height = height;
+	window = glfwCreateWindow(this->width, this->height, "NSFWGL Window" , nullptr, nullptr);
+	if (window == nullptr)
+	{
+		std::cout << "Error creating context window\n";
+		return;
+	}
+
+	//context must be set before callingf ogl_loadfunctions
+	glfwMakeContextCurrent(window);
+
+	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
+	{
+		std::cout << "Error loading ogl.\n";
+		delete window;
+		return;
+	}
+
 }
 
 void nsfw::Window::step()

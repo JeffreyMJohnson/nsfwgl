@@ -4,6 +4,8 @@
 #include <cstring>
 #include <cassert>
 
+#include "gl_core_4_4.h"
+#include "GLFW\glfw3.h"
 #define GLM_FORCE_PURE
 #define GLM_SWIZZLE
 
