@@ -31,42 +31,39 @@ void nsfw::Window::init(unsigned width, unsigned height)
 
 void nsfw::Window::step()
 {
-	TODO_D("GLFW poll events and swap buffers is all that should really be here! No GL!");
+	//TODO_D("GLFW poll events and swap buffers is all that should really be here! No GL!");
+	glfwPollEvents();
+	glfwSwapBuffers(window);
 }
 
 void nsfw::Window::term()
 {
-	TODO();
+	glfwDestroyWindow(window);
 }
 
 float nsfw::Window::getTime() const
 {
-	TODO();
-	return 0.0f;
+	return glfwGetTime();
 }
 
 bool nsfw::Window::getKey(unsigned k) const
 {
-	TODO();
-	return false;
+	return glfwGetKey(window, k);
 }
 
 bool nsfw::Window::getShouldClose() const
 {
-	TODO();
-	return true;
+	return glfwWindowShouldClose(window);
 }
 
 unsigned nsfw::Window::getWidth() const
 {
-	TODO();
-	return 0;
+	return width;
 }
 
 unsigned nsfw::Window::getHeight() const
 {
-	TODO();
-	return 0;
+	return height;
 }
 
 glm::mat4 nsfw::Window::getTexelAdjustmentMatrix() const
