@@ -1,13 +1,19 @@
 #pragma once
+#include "gl_core_4_4.h"
+#include "GLFW\glfw3.h"
+
+#define GLM_FORCE_PURE
+#define GLM_SWIZZLE
+#include "glm\glm.hpp"
+#include "glm\ext.hpp"
+#include "tiny_obj_loader\tiny_obj_loader.h"
+
 
 #include <iostream>
 #include <cstring>
 #include <cassert>
 
-#include "gl_core_4_4.h"
-#include "GLFW\glfw3.h"
-#define GLM_FORCE_PURE
-#define GLM_SWIZZLE
+
 
 //this garbage needs to come before the includes below
 // http://stackoverflow.com/questions/8487986/file-macro-shows-full-path

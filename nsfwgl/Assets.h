@@ -1,6 +1,7 @@
 #pragma once
 #include <unordered_map>
 #include <string>
+#include <fstream>
 
 /*
 	The asset management object is a place to keep track of all of the memory
@@ -43,9 +44,9 @@ namespace nsfw
 	namespace ASSET
 	{
 		enum GL_HANDLE_TYPE { eNONE, VAO, IBO, VBO, SIZE, FBO, RBO, TEXTURE, SHADER, eSIZE };
-		
+
 	}
-		
+
 	extern const char *TYPE_NAMES[];
 	// Use a handle type and name to use as an index for each asset
 	typedef std::pair<ASSET::GL_HANDLE_TYPE, std::string>  AssetKey;
@@ -64,9 +65,9 @@ namespace nsfw
 		Asset &operator=(const char *s) { name = s; return *this; }			 // conviently assign strings directly to reference		
 		operator AssetKey() const { return AssetKey(t, name); }				 // for use with Assets::Operator[]
 		GL_HANDLE operator*() const { return Assets::instance()[*this]; } // Overload value-of operator, to dereference
-        const void* operator&() const { return Assets::instance().getUNIFORM(*this); }
-        operator const void*() const { return Assets::instance().getUNIFORM(*this); }
-    };
+		const void* operator&() const { return Assets::instance().getUNIFORM(*this); }
+		operator const void*() const { return Assets::instance().getUNIFORM(*this); }
+	};
 
 	/*
 		Asset management singleton. It should be the only place that the glGen**** functions
@@ -80,7 +81,7 @@ namespace nsfw
 	private:
 		// Hashing functor object for accepting pair<enum,string> as an index.
 		struct Hash { size_t operator()(AssetKey k) const { return std::hash<std::string>()(k.second) + (unsigned)k.first; } };
-		
+
 		// Store all of our keys in one place!
 		std::unordered_map<AssetKey, GL_HANDLE, Hash> handles;
 		Assets() {}
@@ -88,24 +89,26 @@ namespace nsfw
 		GL_HANDLE getVERIFIED(const AssetKey &key) const;
 
 		bool setINTERNAL(ASSET::GL_HANDLE_TYPE t, char *name, GL_HANDLE handle);
+
+		unsigned int LoadSubShader(unsigned int shaderType, const char * path);
 	public:
 		// Singleton accessor
 		static Assets &instance() { static Assets a; return a; }
 
 		//normal get handle function
-		GL_HANDLE get(ASSET::GL_HANDLE_TYPE t, const char *name)	const { return getVERIFIED(AssetKey(t,name)); }
+		GL_HANDLE get(ASSET::GL_HANDLE_TYPE t, const char *name)	const { return getVERIFIED(AssetKey(t, name)); }
 
 		//templated Get,for sexiness
 		template<ASSET::GL_HANDLE_TYPE t>
-		GL_HANDLE get(const char *name)			const { return getVERIFIED(AssetKey(t,name)); }
+		GL_HANDLE get(const char *name)			const { return getVERIFIED(AssetKey(t, name)); }
 
 		// Get via the Asset reference, sexier
 		GL_HANDLE get(const AssetKey &key)				const { return getVERIFIED(key); }
 
 		//Conveniently fetch handle using an Asset object, for even more sexy
-        GL_HANDLE operator[](const AssetKey &key) const { return getVERIFIED(key); }
+		GL_HANDLE operator[](const AssetKey &key) const { return getVERIFIED(key); }
 
-        const void *getUNIFORM(const AssetKey &key) { return handles.find(key)._Ptr; }
+		const void *getUNIFORM(const AssetKey &key) { return handles.find(key)._Ptr; }
 
 
 		/////////////////////
@@ -123,10 +126,10 @@ namespace nsfw
 
 		// should load a texture from a file, use makeTexture to alloc, and then copy filedata in
 		bool loadTexture(const char *name, const char *path);
-	
+
 		// should load a shader from file
 		bool loadShader(const char *name, const char *vpath, const char *fpath);
-	
+
 		// should load from an FBX, adding assets to the library as they are discovered
 		bool loadFBX(const char *name, const char *path);
 
@@ -138,4 +141,4 @@ namespace nsfw
 		// clear out all of the opengl handles!
 		void term();
 	};
-}
+ }

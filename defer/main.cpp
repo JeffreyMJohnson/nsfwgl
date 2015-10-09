@@ -33,15 +33,15 @@ void DeferredApplication::onInit()
 	const unsigned gpassDepths[] = { 0,0,0,0 }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
 	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
-	const char *lpassTextureNames[] = { "LPassColor" };
-	const unsigned lpassDepths[] = { 0 }; // GL_RGB8
-	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths); 
+	//const char *lpassTextureNames[] = { "LPassColor" };
+	//const unsigned lpassDepths[] = { 0 }; // GL_RGB8
+	//a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths); 
 
 	// Load Shaders
-	a.loadShader("GeometryPassPhong", "/path/to/gpass/Phong/vertex", "/path/to/gpass/Phong/fragment");
-	a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
+	//a.loadShader("GeometryPassPhong", "/path/to/gpass/Phong/vertex", "/path/to/gpass/Phong/fragment");
+	//a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
-	a.loadShader("CompPass", "/path/to/cpass/vertex", "/path/to/cpass/fragment");
+	a.loadShader("CompPass", "Vert.glsl", "Frag.glsl");
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "/path/to/souuuulspppeeeeaaar");

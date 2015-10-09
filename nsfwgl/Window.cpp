@@ -1,3 +1,4 @@
+
 #include "nsfw.h"
 
 void nsfw::Window::init(unsigned width, unsigned height)

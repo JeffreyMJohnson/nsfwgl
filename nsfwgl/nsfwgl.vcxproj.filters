@@ -27,6 +27,9 @@
     <ClCompile Include="gl_core_4_4.c">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\dep\tiny_obj_loader\tiny_obj_loader.cc">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Assets.h">
@@ -48,6 +51,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\dep\gl_core_4_4.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\dep\tiny_obj_loader\tiny_obj_loader.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

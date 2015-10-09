@@ -38,6 +38,39 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, char *name, GL_HANDLE ha
 	return true;
 }
 
+unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * path)
+{
+	std::ifstream stream(path);
+	std::string contents = std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
+	if (contents.length() == 0)
+	{
+		std::cout << "Error loading shader file " << path << "\ntext:\n" << contents << std::endl;
+		return 0;
+	}
+
+	char* code = new char[contents.length() + 1];
+	strncpy_s(code, contents.length() + 1, contents.c_str(), contents.length());
+	unsigned int shader = glCreateShader(shaderType);
+
+	glShaderSource(shader, 1, &code, 0);
+	GLint success = GL_FALSE;
+	glCompileShader(shader);
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		int length = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+		char* log = new char[length];
+		glGetShaderInfoLog(shader, length, 0, log);
+		std::cout << "Error compiling shader.\n" << log << std::endl;
+		delete[] log;
+	}
+
+	delete[] code;
+
+	return shader;
+}
+
 
 bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize, const unsigned * tris, unsigned tsize)
 {
@@ -147,23 +180,130 @@ bool nsfw::Assets::loadTexture(const char * name, const char * path)
 
 bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char * fpath)
 {
-	ASSET_LOG(GL_HANDLE_TYPE::SHADER);
-	TODO_D("Load shader from a file.");
-	return false;
+	//ASSET_LOG(GL_HANDLE_TYPE::SHADER);
+	//TODO_D("Load shader from a file.");
+	unsigned int vertex = LoadSubShader(GL_VERTEX_SHADER, vpath);
+	if (vertex == 0)
+	{
+		return false;
+	}
+	unsigned int fragment = LoadSubShader(GL_FRAGMENT_SHADER, fpath);
+	if (fragment == 0)
+	{
+		return false;
+	}
+
+	int success = GL_FALSE;
+	GLuint	shader = glCreateProgram();
+	glAttachShader(shader, vertex);
+	glAttachShader(shader, fragment);
+	glLinkProgram(shader);
+	glDeleteShader(vertex);
+	glDeleteShader(fragment);
+
+	glGetProgramiv(shader, GL_LINK_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		int length = 0;
+		glGetProgramiv(shader, GL_INFO_LOG_LENGTH, &length);
+		char* log = new char[length];
+		glGetProgramInfoLog(shader, length, 0, log);
+		std::cout << "Error linking shader program.\n" << log << std::endl;
+		delete[] log;
+		return false;
+	}
+
+	handles[AssetKey(GL_HANDLE_TYPE::SHADER, name)] = shader;
+	return true;
 }
 
 bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
 	//name/meshName
 	//name/textureName
-	TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
-	return false;
+	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
+	//bool success = true;
+	//
+	//FBXFile file;
+	//	success = file.load(path, FBXFile::UNITS_METER, false, false, false);
+	//	if (!success)
+	//	{
+	//		std::cout << "Error loading FBX file:\n";
+	//	}
+	//	else
+	//	{
+	//		//hardcoding to use single mesh, can loop here if needed.
+	//		FBXMeshNode* mesh = file.getMeshByIndex(0);
+	//		vertices.resize(mesh->m_vertices.size());
+	//		for (int i = 0; i < mesh->m_vertices.size(); i++)
+	//		{
+	//			auto xVert = mesh->m_vertices[i];
+	//			vertices[i].position = xVert.position;
+	//			vertices[i].color = xVert.colour;
+	//			vertices[i].normal = xVert.normal;
+	//			vertices[i].UV = xVert.texCoord1;
+	//		}
+	//		indices = mesh->m_indices;
+	//		file.unload();
+	//	}
+	//}
+	//else
+	//{
+	//	std::cout << "Unsupported format. Only support .obj or .fbx files.\n";
+	//	success = false;
+	//}
+	//if (!success)
+	//{
+	//	return false;
+	//}
+	return true;
 }
 
 bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 {
-	TODO_D("OBJ file-loading support needed.\nThis function should call makeVAO and loadTexture (if necessary), MAKE SURE TO TAKE THE OBJ DATA AND PROPERLY LINE IT UP WITH YOUR VERTEX ATTRIBUTES (or interleave the data into your vertex struct).\n");
-	return false;
+	std::vector<Vertex> vertices;
+	std::vector<unsigned int> indices;
+	std::vector<tinyobj::shape_t> shapes;
+	std::vector<tinyobj::material_t> materials;
+	std::string err = tinyobj::LoadObj(shapes, materials, path);
+	if (err.length() != 0)
+	{
+		std::cout << "Error loading OBJ file:\n" << err << std::endl;
+		return false;
+	}
+	//hard coding only using first shape, can change to loop here
+	auto shape = shapes[0];
+	auto mesh = shape.mesh;
+	unsigned int posIndex = 0;
+	unsigned int normalIndex = 0;
+	unsigned int UVIndex = 0;
+	bool hasNormals = mesh.normals.size() == mesh.positions.size();
+	bool hasUVs = mesh.texcoords.size() == mesh.positions.size();
+	//obj has vectors of floats, my struct and shaders uses glm vecs so need to build myself
+	for (unsigned int vertexCount = 0; posIndex < mesh.positions.size(); vertexCount++)
+	{
+		Vertex vertex;
+		float x = mesh.positions[posIndex++];
+		float y = mesh.positions[posIndex++];
+		float z = mesh.positions[posIndex++];
+		vertex.position = vec4(x, y, z, 1);
+		if (hasNormals)
+		{
+			x = mesh.normals[normalIndex++];
+			y = mesh.normals[normalIndex++];
+			z = mesh.normals[normalIndex++];
+			vertex.normal = vec4(x, y, z, 1);
+		}
+		if (hasUVs)
+		{
+			x = mesh.texcoords[UVIndex++];
+			y = mesh.texcoords[UVIndex++];
+			vertex.texCoord = vec2(x, y);
+		}
+		vertices.push_back(vertex);
+	}
+	indices = mesh.indices;
+	makeVAO(name, vertices.data(), vertices.size(), indices.data(), indices.size());
 }
 
 void nsfw::Assets::init()
