@@ -7,8 +7,8 @@
 #include "glm\glm.hpp"
 #include "glm\ext.hpp"
 #include "tiny_obj_loader\tiny_obj_loader.h"
-
-
+#include "FBXFile.h"
+#include "stb\stb_image.h"
 #include <iostream>
 #include <cstring>
 #include <cassert>

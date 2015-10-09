@@ -44,7 +44,7 @@ void DeferredApplication::onInit()
 	a.loadShader("CompPass", "Vert.glsl", "Frag.glsl");
 
 	// Load any other textures and geometry we want to use
-	a.loadFBX("Soulspear", "/path/to/souuuulspppeeeeaaar");
+	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
 }
 
 void DeferredApplication::onPlay()

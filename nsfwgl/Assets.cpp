@@ -174,8 +174,28 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 
 bool nsfw::Assets::loadTexture(const char * name, const char * path)
 {
-	TODO_D("This should load a texture from a file, using makeTexture to perform the allocation.\nUse STBI, and make sure you switch the format STBI provides to match what openGL needs!");
-	return false;
+	//TODO_D("This should load a texture from a file, using makeTexture to perform the allocation.\nUse STBI, and make sure you switch the format STBI provides to match what openGL needs!");
+	int imageWidth = 0, imageHeight = 0, imageFormat = 0;
+	const char* data = (const char*)stbi_load(path, &imageWidth, &imageHeight, &imageFormat, STBI_default);
+
+	switch (imageFormat)
+	{
+	case 1: imageFormat = GL_RED; break;
+	case 2: imageFormat = GL_RG; break;
+	case 3: imageFormat = GL_RGB; break;
+	case 4: imageFormat = GL_RGBA; break;
+	}
+
+	if (data == nullptr)
+	{
+		std::cout << "error loading texture.\n" << stbi_failure_reason();
+		return false;
+	}
+
+	makeTexture(name, imageWidth, imageHeight, imageFormat, data);
+	stbi_image_free((void*)data);
+	
+	return true;
 }
 
 bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char * fpath)
@@ -221,41 +241,47 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
 	//name/meshName
 	//name/textureName
-	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
+	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, 
+	//you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
 	//bool success = true;
 	//
-	//FBXFile file;
-	//	success = file.load(path, FBXFile::UNITS_METER, false, false, false);
-	//	if (!success)
-	//	{
-	//		std::cout << "Error loading FBX file:\n";
-	//	}
-	//	else
-	//	{
-	//		//hardcoding to use single mesh, can loop here if needed.
-	//		FBXMeshNode* mesh = file.getMeshByIndex(0);
-	//		vertices.resize(mesh->m_vertices.size());
-	//		for (int i = 0; i < mesh->m_vertices.size(); i++)
-	//		{
-	//			auto xVert = mesh->m_vertices[i];
-	//			vertices[i].position = xVert.position;
-	//			vertices[i].color = xVert.colour;
-	//			vertices[i].normal = xVert.normal;
-	//			vertices[i].UV = xVert.texCoord1;
-	//		}
-	//		indices = mesh->m_indices;
-	//		file.unload();
-	//	}
-	//}
-	//else
-	//{
-	//	std::cout << "Unsupported format. Only support .obj or .fbx files.\n";
-	//	success = false;
-	//}
-	//if (!success)
-	//{
-	//	return false;
-	//}
+
+	FBXFile file;
+	std::vector<Vertex> vertices;
+	std::vector<unsigned> indices;
+	bool success = file.load(path, FBXFile::UNITS_METER, true, false, false);
+	if (!success)
+	{
+		std::cout << "Error loading FBX file:\n";
+		return false;
+	}
+
+	//load meshes
+	for (int i = 0; i < file.getMeshCount(); i++)
+	{
+		FBXMeshNode* mesh = file.getMeshByIndex(0);
+
+		for (int i = 0; i < mesh->m_vertices.size(); i++)
+		{
+			auto xVert = mesh->m_vertices[i];
+			Vertex v;
+			v.position = xVert.position;
+			v.normal = xVert.normal;
+			v.texCoord = xVert.texCoord1;
+			vertices.push_back(v);
+		}
+		indices = mesh->m_indices;
+
+		makeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
+	}	
+
+	//load textures
+	for (int i = 0; i < file.getTextureCount(); i++)
+	{
+		FBXTexture* tex = file.getTextureByIndex(i);
+		loadTexture(tex->name.c_str(), tex->path.c_str());
+	}
+		file.unload();
 	return true;
 }
 
@@ -271,39 +297,43 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 		std::cout << "Error loading OBJ file:\n" << err << std::endl;
 		return false;
 	}
-	//hard coding only using first shape, can change to loop here
-	auto shape = shapes[0];
-	auto mesh = shape.mesh;
-	unsigned int posIndex = 0;
-	unsigned int normalIndex = 0;
-	unsigned int UVIndex = 0;
-	bool hasNormals = mesh.normals.size() == mesh.positions.size();
-	bool hasUVs = mesh.texcoords.size() == mesh.positions.size();
-	//obj has vectors of floats, my struct and shaders uses glm vecs so need to build myself
-	for (unsigned int vertexCount = 0; posIndex < mesh.positions.size(); vertexCount++)
+	//load meshes
+	for (int i = 0; i < shapes.size(); i++)
 	{
-		Vertex vertex;
-		float x = mesh.positions[posIndex++];
-		float y = mesh.positions[posIndex++];
-		float z = mesh.positions[posIndex++];
-		vertex.position = vec4(x, y, z, 1);
-		if (hasNormals)
+		auto shape = shapes[i];
+		auto mesh = shape.mesh;
+		unsigned int posIndex = 0;
+		unsigned int normalIndex = 0;
+		unsigned int UVIndex = 0;
+		bool hasNormals = mesh.normals.size() == mesh.positions.size();
+		bool hasUVs = mesh.texcoords.size() == mesh.positions.size();
+		//obj has vectors of floats, my struct and shaders uses glm vecs so need to build myself
+		for (unsigned int vertexCount = 0; posIndex < mesh.positions.size(); vertexCount++)
 		{
-			x = mesh.normals[normalIndex++];
-			y = mesh.normals[normalIndex++];
-			z = mesh.normals[normalIndex++];
-			vertex.normal = vec4(x, y, z, 1);
+			Vertex vertex;
+			float x = mesh.positions[posIndex++];
+			float y = mesh.positions[posIndex++];
+			float z = mesh.positions[posIndex++];
+			vertex.position = vec4(x, y, z, 1);
+			if (hasNormals)
+			{
+				x = mesh.normals[normalIndex++];
+				y = mesh.normals[normalIndex++];
+				z = mesh.normals[normalIndex++];
+				vertex.normal = vec4(x, y, z, 1);
+			}
+			if (hasUVs)
+			{
+				x = mesh.texcoords[UVIndex++];
+				y = mesh.texcoords[UVIndex++];
+				vertex.texCoord = vec2(x, y);
+			}
+			vertices.push_back(vertex);
 		}
-		if (hasUVs)
-		{
-			x = mesh.texcoords[UVIndex++];
-			y = mesh.texcoords[UVIndex++];
-			vertex.texCoord = vec2(x, y);
-		}
-		vertices.push_back(vertex);
+		indices = mesh.indices;
+		makeVAO(shape.name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
-	indices = mesh.indices;
-	makeVAO(name, vertices.data(), vertices.size(), indices.data(), indices.size());
+	
 }
 
 void nsfw::Assets::init()
