@@ -122,7 +122,9 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned nTextures, const char * names[], const unsigned depths[])
 {
 	ASSET_LOG(GL_HANDLE_TYPE::FBO);
-	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\nuse makeTexture.\nNOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
+	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\n
+	//use makeTexture.\n
+	//NOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
 	// setup framebuffer
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -243,8 +245,6 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	//name/textureName
 	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, 
 	//you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
-	//bool success = true;
-	//
 
 	FBXFile file;
 	std::vector<Vertex> vertices;
