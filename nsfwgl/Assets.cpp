@@ -23,7 +23,7 @@ nsfw::GL_HANDLE nsfw::Assets::getVERIFIED(const AssetKey &key) const
 	return handles.at(key);
 }
 
-bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, char *name, GL_HANDLE handle)
+bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, constr char *name, GL_HANDLE handle)
 {
 	AssetKey key(t, name);
 #ifdef _DEBUG
@@ -83,10 +83,10 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ibo);
-	handles[AssetKey(GL_HANDLE_TYPE::VAO, name)] = vao;
-	handles[AssetKey(GL_HANDLE_TYPE::VBO, name)] = vbo;
-	handles[AssetKey(GL_HANDLE_TYPE::IBO, name)] = ibo;
-	handles[AssetKey(GL_HANDLE_TYPE::SIZE, name)] = tsize;
+	setINTERNAL(VAO, name, vao);
+	setINTERNAL(VBO, name, vbo);
+	setINTERNAL(IBO, name, ibo);
+	setINTERNAL(GL_HANDLE_TYPE::SIZE, name, tsize);
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -129,12 +129,17 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-
+	int n = 0;
 	for (int i = 0; i < nTextures; i++)
 	{
 		makeTexture(names[i], w, h, depths[i], nullptr);
+		glFramebufferTexture2D(GL_FRAMEBUFFER, (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + n++), GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+
 	}
+	setINTERNAL(FBO, name, fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
 	return true;
 	/*
 	glGenTextures(1, &mFBOTexture);
