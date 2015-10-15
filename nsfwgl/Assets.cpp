@@ -1,4 +1,5 @@
 #include "nsfw.h"
+#include <array>
 
 using namespace nsfw::ASSET;
 
@@ -23,7 +24,7 @@ nsfw::GL_HANDLE nsfw::Assets::getVERIFIED(const AssetKey &key) const
 	return handles.at(key);
 }
 
-bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, constr char *name, GL_HANDLE handle)
+bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HANDLE handle)
 {
 	AssetKey key(t, name);
 #ifdef _DEBUG
@@ -125,21 +126,48 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\n
 	//use makeTexture.\n
 	//NOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
+	
 	// setup framebuffer
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	int n = 0;
+	GLenum attachPoint = GL_COLOR_ATTACHMENT0;
+	std::vector<GLenum> drawBuffers;
 	for (int i = 0; i < nTextures; i++)
 	{
-		makeTexture(names[i], w, h, depths[i], nullptr);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + n++), GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+		const unsigned depth = depths[i];
+		const char* a_name = names[i];
+		makeTexture(a_name, w, h, depth, nullptr);
 
+		GL_HANDLE tex = get(TEXTURE, a_name);
+
+		if (depth == GL_DEPTH_COMPONENT)
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+		}
+		else
+		{
+			glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+			drawBuffers.push_back(attachPoint);
+			attachPoint++;
+		}
+		
+		
 	}
-	setINTERNAL(FBO, name, fbo);
+	
+	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
+
+	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
+	
+	if (status != GL_FRAMEBUFFER_COMPLETE)
+	{
+		bool incompleteAttachment = status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
+		bool invalidEnum = status == GL_INVALID_ENUM;
+		bool invalidValue = status == GL_INVALID_VALUE;
+		printf("Framebuffer Error!\n");
+		return false;
+	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
 	return true;
 	/*
 	glGenTextures(1, &mFBOTexture);
@@ -170,11 +198,23 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
 	glGenTextures(1, &tex);
-	handles[AssetKey(GL_HANDLE_TYPE::TEXTURE, name)] = tex;
+	setINTERNAL(TEXTURE, name, tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
+	GLenum a_depth = (depth == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : depth;
 	glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	
+	GLenum error = glGetError();
+	if (error != GL_NO_ERROR)
+	{
+		bool invalidEnum = error == GL_INVALID_ENUM;
+		bool invalidValue = error == GL_INVALID_VALUE;
+		printf("error with texture.\n");
+		glBindTexture(GL_TEXTURE_2D, 0);
+		return false;
+	}
+
 	glBindTexture(GL_TEXTURE_2D, 0);
 	return true;
 }
@@ -201,7 +241,7 @@ bool nsfw::Assets::loadTexture(const char * name, const char * path)
 
 	makeTexture(name, imageWidth, imageHeight, imageFormat, data);
 	stbi_image_free((void*)data);
-	
+
 	return true;
 }
 
@@ -278,7 +318,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 		indices = mesh->m_indices;
 
 		makeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
-	}	
+	}
 
 	//load textures
 	for (int i = 0; i < file.getTextureCount(); i++)
@@ -286,7 +326,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 		FBXTexture* tex = file.getTextureByIndex(i);
 		loadTexture(tex->name.c_str(), tex->path.c_str());
 	}
-		file.unload();
+	file.unload();
 	return true;
 }
 
@@ -338,7 +378,7 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 		indices = mesh.indices;
 		makeVAO(shape.name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
-	
+
 }
 
 void nsfw::Assets::init()
