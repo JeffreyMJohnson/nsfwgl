@@ -38,10 +38,10 @@ void DeferredApplication::onInit()
 	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths); 
 
 	// Load Shaders
-	a.loadShader("GeometryPassPhong", "/path/to/gpass/Phong/vertex", "/path/to/gpass/Phong/fragment");
+	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
 	a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
-	a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
-	a.loadShader("CompPass", "Vert.glsl", "Frag.glsl");
+	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
+	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
@@ -49,7 +49,7 @@ void DeferredApplication::onInit()
 
 void DeferredApplication::onPlay()
 {
-	TODO_D("Initialize our scene objects!");
+	//TODO_D("Initialize our scene objects!");
 	m_camera    = new Camera;
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
@@ -59,8 +59,8 @@ void DeferredApplication::onPlay()
 	m_light->color      = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
 
-	m_soulspear->mesh	   = "Soulspear_Low::Soulspear_Low1";
-	m_soulspear->tris	   = "Soulspear_Low::Soulspear_Low1";
+	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->diffuse   = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
 	m_soulspear->normal    = "soulspear_normal.tga";		// These handle names may not be what your loadFBX sets 
 	m_soulspear->specular  = "soulspear_specular.tga";	// them as! (Assets will report what the key names are though)
@@ -70,25 +70,25 @@ void DeferredApplication::onPlay()
 	TODO_D("Initialize our render passes!");
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
-	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
+	//m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
 	m_compositePass			= new CPass ("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 }
 
 void DeferredApplication::onStep()
 {
-	TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
+	//TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
 	m_light->update();
 	m_camera->update();
 	m_soulspear->update();
 	
-	TODO_D("Draw all of our renderpasses!");
+	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();
 
-	m_directionalLightPass->prep();
-	m_directionalLightPass->draw(*m_camera, *m_light);
-	m_directionalLightPass->post();
+	//m_directionalLightPass->prep();
+	//m_directionalLightPass->draw(*m_camera, *m_light);
+	//m_directionalLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();

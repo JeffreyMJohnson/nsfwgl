@@ -34,7 +34,14 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 }
 
 // set GL state settings and globally accessible uniforms! Should be called before rendering occurs!
-void nsfw::RenderPass::prep() { TODO_D("OVERRIDE: Setup the state of the card for this pass."); }
+void nsfw::RenderPass::prep()
+{
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glEnable(GL_DEPTH_TEST);
+}
 
 // reset the GL state- undo what we did just in case.
-void nsfw::RenderPass::post() { TODO_D("OVERRIDE: Clean up the state of the card."); }
+void nsfw::RenderPass::post() 
+{ 
+	
+}

@@ -135,13 +135,11 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	std::vector<GLenum> drawBuffers;
 	for (int i = 0; i < nTextures; i++)
 	{
-		const unsigned depth = depths[i];
-		const char* a_name = names[i];
-		makeTexture(a_name, w, h, depth, nullptr);
+		makeTexture(names[i], w, h, depths[i], nullptr);
 
-		GL_HANDLE tex = get(TEXTURE, a_name);
+		GL_HANDLE tex = get(TEXTURE, names[i]);
 
-		if (depth == GL_DEPTH_COMPONENT)
+		if (depths[i] == GL_DEPTH_COMPONENT)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
 		}
@@ -168,28 +166,8 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 		return false;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	setINTERNAL(FBO, name, fbo);
 	return true;
-	/*
-	glGenTextures(1, &mFBOTexture);
-	glBindTexture(GL_TEXTURE_2D, mFBOTexture);
-	glTexStorage2D(GL_TEXTURE_2D, 1, GL_RGB8, 512, 512);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0,
-		mFBOTexture, 0);
-	glGenRenderbuffers(1, &mFBODepth);
-	glBindRenderbuffer(GL_RENDERBUFFER, mFBODepth);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24,512, 512);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT,	GL_RENDERBUFFER, mFBODepth);
-	GLenum drawBuffers[] = { GL_COLOR_ATTACHMENT0 };
-	glDrawBuffers(1, drawBuffers);
-	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	if (status != GL_FRAMEBUFFER_COMPLETE)
-		printf("Framebuffer Error!\n");
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	*/
-
-
 }
 
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
@@ -198,7 +176,7 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
 	glGenTextures(1, &tex);
-	setINTERNAL(TEXTURE, name, tex);
+	
 	glBindTexture(GL_TEXTURE_2D, tex);
 	GLenum a_depth = (depth == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : depth;
 	glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
@@ -214,8 +192,8 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 		glBindTexture(GL_TEXTURE_2D, 0);
 		return false;
 	}
-
 	glBindTexture(GL_TEXTURE_2D, 0);
+	setINTERNAL(TEXTURE, name, tex);
 	return true;
 }
 
@@ -280,7 +258,7 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 		return false;
 	}
 
-	handles[AssetKey(GL_HANDLE_TYPE::SHADER, name)] = shader;
+	setINTERNAL(GL_HANDLE_TYPE::SHADER, name, shader);
 	return true;
 }
 

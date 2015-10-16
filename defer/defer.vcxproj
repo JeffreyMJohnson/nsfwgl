@@ -146,6 +146,14 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="LPassD.h" />
   </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\Cpass_frag.glsl" />
+    <None Include="shaders\Cpass_vert.glsl" />
+    <None Include="shaders\Gpass_frag.glsl" />
+    <None Include="shaders\Gpass_vert.glsl" />
+    <None Include="shaders\Light_pass_directional_frag.glsl" />
+    <None Include="shaders\Light_pass_directional_vert.glsl" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

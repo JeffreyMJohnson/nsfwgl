@@ -19,6 +19,9 @@
     <Filter Include="Header Files\Objects">
       <UniqueIdentifier>{68e26eeb-b2f2-4190-a60c-0f6e40daaa90}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\shaders">
+      <UniqueIdentifier>{dba01b2b-c9bd-462f-afb8-9a6a5cb00cb7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -47,5 +50,25 @@
     <ClInclude Include="GPass.h">
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="shaders\Gpass_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\Gpass_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\Cpass_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\Cpass_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\Light_pass_directional_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\Light_pass_directional_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
   </ItemGroup>
 </Project>
