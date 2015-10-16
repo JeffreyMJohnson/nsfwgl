@@ -1,21 +1,18 @@
-#version 330
+#version 410
 
 in vec4 vPosition;
 in vec4 vNormal;
 
-out vec4 FragColor;
-
-//uniform vec3 lightDirection = vec3(0,1,0);
-//uniform vec3 lightColor = vec3(1,1,0);
-//uniform vec3 cameraPosition = vec3(10,10,10);
-//uniform float specPower = 128;
+layout(location = 0) out vec3 gpassAlbedo;
+layout(location = 1) out vec3 gpassPosition;
+layout(location = 2) out vec3 gpassNormal;
 
 
-uniform sampler2D Diffuse;
-uniform sampler2D NormalMap;
-uniform sampler2D Specular;
+//uniform sampler2D Diffuse;
+//uniform sampler2D NormalMap;
+//uniform sampler2D Specular;
 
-uniform float SpecularPower;
+//uniform float SpecularPower;
 
 void main() 
 {
@@ -24,5 +21,11 @@ void main()
 	//vec3 reflect = reflect(-lightDirection, vNormal.xyz);
 	//float specular = max(0, dot(eye,reflect));
 	//specular = pow(specular, specPower);
-	FragColor = vec4(1);//vec4(diffuse * lightColor + lightColor * specular, 1);
+	//float d = max(0, dot( normalize(vNormal.xyz), vec3(0,1,0)));
+	//FragColor = vec4(d,d,d,1);
+
+	gpassAlbedo = vec3(1);
+
+	gpassPosition = vPosition.xyz;
+	gpassNormal = vNormal.xyz;
 }

@@ -39,7 +39,7 @@ void DeferredApplication::onInit()
 
 	// Load Shaders
 	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
-	a.loadShader("LightPassDirectional", "/path/to/lpass/Directional/vertex", "/path/to/lpass/Directional/fragment");
+	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
@@ -67,10 +67,10 @@ void DeferredApplication::onPlay()
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
 
-	TODO_D("Initialize our render passes!");
+	//TODO_D("Initialize our render passes!");
 
 	m_geometryPass			= new GPass ("GeometryPassPhong", "GeometryPass");
-	//m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
+	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
 	m_compositePass			= new CPass ("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 }
 
@@ -86,9 +86,9 @@ void DeferredApplication::onStep()
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->post();
 
-	//m_directionalLightPass->prep();
-	//m_directionalLightPass->draw(*m_camera, *m_light);
-	//m_directionalLightPass->post();
+	m_directionalLightPass->prep();
+	m_directionalLightPass->draw(*m_camera, *m_light);
+	m_directionalLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();

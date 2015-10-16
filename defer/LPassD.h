@@ -5,11 +5,26 @@
 
 class LPassD : public nsfw::RenderPass
 {
+	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal;
 public:
-	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
+	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
 
-	void prep() { TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc..."); }
-	void post() { TODO_D("Unset any gl settings"); }
+	void prep() 
+	{
+		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
+		glClear(GL_COLOR_BUFFER_BIT);
+
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_ONE, GL_ONE);
+
+		glUseProgram(*shader);
+	}
+	void post() 
+	{
+		glDisable(GL_BLEND);
+		glUseProgram(0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
+	}
 
 
 	void draw(const Camera &c, const LightD &l)
@@ -19,12 +34,22 @@ public:
 
 		setUniform("LightDirection", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
 		setUniform("LightColor",     nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		setUniform("Position", nsfw::UNIFORM::TEX2, position, 0);
+		glActiveTexture(GL_TEXTURE0);
+		glBindTexture(GL_TEXTURE_2D, *position);
 
-		setUniform("TexelScalar",    nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
+		setUniform("Normal", nsfw::UNIFORM::TEX2, normal, 1);
+		glActiveTexture(GL_TEXTURE1);
+		glBindTexture(GL_TEXTURE_2D, *normal);
+		//setUniform("TexelScalar",    nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
+
+		//setUniform("positionTexture", TEXTURE, )
+
 
 		unsigned quadVAOHandle  = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
 		unsigned quadNumtris    = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");
 
-		TODO_D("GL BindVAO/DrawElements with quad size and vao");
+		glBindVertexArray(quadVAOHandle);
+		glDrawArrays(GL_TRIANGLES, 0, quadNumtris);
 	}
 };

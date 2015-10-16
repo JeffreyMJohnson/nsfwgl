@@ -75,10 +75,10 @@ unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * p
 
 bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize, const unsigned * tris, unsigned tsize)
 {
-	ASSET_LOG(GL_HANDLE_TYPE::VBO);
-	ASSET_LOG(GL_HANDLE_TYPE::IBO);
-	ASSET_LOG(GL_HANDLE_TYPE::VAO);
-	ASSET_LOG(GL_HANDLE_TYPE::SIZE);
+	//ASSET_LOG(GL_HANDLE_TYPE::VBO);
+	//ASSET_LOG(GL_HANDLE_TYPE::IBO);
+	//ASSET_LOG(GL_HANDLE_TYPE::VAO);
+	//ASSET_LOG(GL_HANDLE_TYPE::SIZE);
 	//TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
 	GLuint vao, vbo, ibo;
 	glGenVertexArrays(1, &vao);
@@ -376,20 +376,34 @@ void nsfw::Assets::init()
 
 void nsfw::Assets::term()
 {
-	TODO();
 	for each(std::pair<AssetKey, unsigned> k in handles)
 	{
 		switch (k.first.first)
 		{
-		case VBO:		TODO_D("VBO deletion");		break;
-		case IBO:		TODO_D("IBO deletion");		break;
-		case VAO:		TODO_D("VAO deletion");		break;
-		case SHADER:	TODO_D("Shader deletion");	break;
-		case TEXTURE:	TODO_D("Texture deletion"); break;
-		case RBO:		TODO_D("RBO deletion");		break;
-		case FBO:		TODO_D("FBO deletion");		break;
+		case VBO:		
+			glDeleteBuffers(1, &k.second);
+			break;
+		case IBO:		
+			glDeleteBuffers(1, &k.second);
+			break;
+		case VAO:		
+			glDeleteVertexArrays(1, &k.second);
+			break;
+		case SHADER:	
+			glDeleteProgram(k.second);
+			break;
+		case TEXTURE:	
+			glDeleteTextures(1, &k.second);
+			break;
+		case RBO:		
+			glDeleteRenderbuffers(1, &k.second);
+			break;
+		case FBO:		
+			glDeleteFramebuffers(1, &k.second);
+			break;
 		}
 	}
+	handles.clear();
 }
 
 
