@@ -84,10 +84,6 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
 	glGenBuffers(1, &ibo);
-	setINTERNAL(VAO, name, vao);
-	setINTERNAL(VBO, name, vbo);
-	setINTERNAL(IBO, name, ibo);
-	setINTERNAL(GL_HANDLE_TYPE::SIZE, name, tsize);
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
@@ -117,6 +113,11 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+	setINTERNAL(VAO, name, vao);
+	setINTERNAL(VBO, name, vbo);
+	setINTERNAL(IBO, name, ibo);
+	setINTERNAL(GL_HANDLE_TYPE::SIZE, name, tsize);
 	return true;
 }
 
@@ -126,37 +127,31 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\n
 	//use makeTexture.\n
 	//NOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
-	
+
 	// setup framebuffer
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
-	GLenum attachPoint = GL_COLOR_ATTACHMENT0;
+
 	std::vector<GLenum> drawBuffers;
 	for (int i = 0; i < nTextures; i++)
 	{
 		makeTexture(names[i], w, h, depths[i], nullptr);
-
-		GL_HANDLE tex = get(TEXTURE, names[i]);
-
 		if (depths[i] == GL_DEPTH_COMPONENT)
 		{
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
 		}
 		else
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, attachPoint, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
-			drawBuffers.push_back(attachPoint);
-			attachPoint++;
+			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+			drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
-		
-		
+
 	}
-	
 	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
 
 	GLenum status = glCheckFramebufferStatus(GL_FRAMEBUFFER);
-	
+
 	if (status != GL_FRAMEBUFFER_COMPLETE)
 	{
 		bool incompleteAttachment = status == GL_FRAMEBUFFER_INCOMPLETE_ATTACHMENT;
@@ -176,12 +171,20 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
 	glGenTextures(1, &tex);
-	
+
 	glBindTexture(GL_TEXTURE_2D, tex);
-	GLenum a_depth = (depth == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : depth;
-	glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	if (nullptr == pixels && depth != GL_DEPTH_COMPONENT)
+	{
+		glTexStorage2D(GL_TEXTURE_2D, 1, depth, 1280, 720);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+	}
+	else
+	{
+		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	}
 	
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
@@ -380,25 +383,25 @@ void nsfw::Assets::term()
 	{
 		switch (k.first.first)
 		{
-		case VBO:		
+		case VBO:
 			glDeleteBuffers(1, &k.second);
 			break;
-		case IBO:		
+		case IBO:
 			glDeleteBuffers(1, &k.second);
 			break;
-		case VAO:		
+		case VAO:
 			glDeleteVertexArrays(1, &k.second);
 			break;
-		case SHADER:	
+		case SHADER:
 			glDeleteProgram(k.second);
 			break;
-		case TEXTURE:	
+		case TEXTURE:
 			glDeleteTextures(1, &k.second);
 			break;
-		case RBO:		
+		case RBO:
 			glDeleteRenderbuffers(1, &k.second);
 			break;
-		case FBO:		
+		case FBO:
 			glDeleteFramebuffers(1, &k.second);
 			break;
 		}

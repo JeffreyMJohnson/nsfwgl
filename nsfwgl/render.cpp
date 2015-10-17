@@ -4,12 +4,8 @@
 // Each Case should set up a uniform using the pass parameters
 bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, const void *value, unsigned count, bool normalize) 
 {
+	glGetError();
 	GLint location = glGetUniformLocation(*shader, name);
-	if (location == -1)
-	{
-		printf("Error locating uniform %s in shader.\n", name);
-		return false;
-	}
 	switch (type)
 	{
 	case nsfw::UNIFORM::FLO1:
@@ -43,12 +39,11 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 // set GL state settings and globally accessible uniforms! Should be called before rendering occurs!
 void nsfw::RenderPass::prep()
 {
-	//glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	//glEnable(GL_DEPTH_TEST);
+
 }
 
 // reset the GL state- undo what we did just in case.
 void nsfw::RenderPass::post() 
 { 
-	//glDisable(GL_DEPTH_TEST);
+
 }

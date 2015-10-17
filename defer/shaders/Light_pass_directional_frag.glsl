@@ -7,14 +7,9 @@ out vec3 LightOutput;
 //direction in view-space
 uniform vec3 LightDirection = vec3(0,1,0);
 uniform vec3 LightColor = vec3(1,1,0);
-//uniform mat4 TexelScalar;
-
-//uniform vec3 cameraPosition = vec3(10,10,10);
-//uniform float specPower = 128;
 
 uniform sampler2D positionTexture;
 uniform sampler2D normalTexture;
-
 
 void main() 
 {

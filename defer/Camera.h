@@ -10,7 +10,7 @@ struct Camera
 	glm::mat4 transform;
 	float mFar, mNear, aspect, fov;
 
-	Camera() : mNear(0), mFar(100), aspect(nsfw::Window::instance().getWidth() / (float)nsfw::Window::instance().getHeight()), fov(90) {}
+	Camera() : mNear(0), mFar(1000), aspect(nsfw::Window::instance().getWidth() / (float)nsfw::Window::instance().getHeight()), fov(glm::pi<float>() * .25f) {}
 
 	void update() {}
 	void lookAt(glm::vec3 pos, glm::vec3 target, glm::vec3 up) { transform = glm::inverse(glm::lookAt(pos, target, up)); }

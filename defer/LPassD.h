@@ -29,18 +29,14 @@ public:
 
 	void draw(const Camera &c, const LightD &l)
 	{
-		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
-		setUniform("View",       nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
+		//setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
+		//setUniform("View",       nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
 
 		setUniform("LightDirection", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
 		setUniform("LightColor",     nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
-		setUniform("Position", nsfw::UNIFORM::TEX2, position, 0);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, *position);
+		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
 
-		setUniform("Normal", nsfw::UNIFORM::TEX2, normal, 1);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, *normal);
+		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
 		//setUniform("TexelScalar",    nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
 
 		//setUniform("positionTexture", TEXTURE, )
