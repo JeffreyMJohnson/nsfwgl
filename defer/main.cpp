@@ -28,6 +28,17 @@ void DeferredApplication::onInit()
 	auto &w = nsfw::Window::instance();
 	auto &a = nsfw::Assets::instance();
 
+	// Load Shaders
+	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
+	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
+	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
+	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
+	//a.loadShader("CompPass", "./shaders/test_vert.glsl", "./shaders/test_frag.glsl");
+
+	m_camera = new Camera;
+	m_camera->StartupPerspective(glm::pi<float>() * .25f, (float)1280 / 720, .1f, 1000.0f);
+	m_camera->SetView(glm::vec3(10), glm::vec3(0), glm::vec3(0, 1, 0));
+
 	// Setup FBOs
 	const char *gpassTextureNames[] = { "GPassAlbedo","GPassPosition","GPassNormal","GPassDepth" };
 	const unsigned gpassDepths[] = { GL_RGB8,GL_RGB32F,GL_RGB32F,GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
@@ -37,12 +48,7 @@ void DeferredApplication::onInit()
 	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
 	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths); 
 
-	// Load Shaders
-	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
-	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
-	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
-	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
-	//a.loadShader("CompPass", "./shaders/test_vert.glsl", "./shaders/test_frag.glsl");
+
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
@@ -52,12 +58,9 @@ void DeferredApplication::onInit()
 void DeferredApplication::onPlay()
 {
 	//TODO_D("Initialize our scene objects!");
-	m_camera    = new Camera;
+	
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
-
-	m_camera->StartupPerspective(glm::pi<float>() * .25f, (float)1280 / 720, .1f, 1000.0f);
-	m_camera->SetView(glm::vec3(10), glm::vec3(0), glm::vec3(0, 1, 0));
 
 	//mTestCube = new Geometry;
 	//mTestCube->mesh = "Cube";

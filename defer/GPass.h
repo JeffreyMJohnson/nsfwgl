@@ -40,7 +40,7 @@ public:
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
 
-		setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
+		setUniform("Diffuse", nsfw::UNIFORM::TEX2, &g.diffuse, 0);
 
 		//setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
 		//setUniform("Specular", nsfw::UNIFORM::TEX2, g.specular, 2);

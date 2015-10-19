@@ -36,10 +36,10 @@ public:
 	void draw()
 	{
 		// Set uniforms for textures we're going to composite-> NAMES ARE FROM SHADER!
-		setUniform("Albedo", nsfw::UNIFORM::TEX2, albedo, 0);
+		setUniform("Albedo", nsfw::UNIFORM::TEX2, &albedo, 0);
 
-		setUniform("Depth", nsfw::UNIFORM::TEX2, depth, 1);
-		setUniform("Light", nsfw::UNIFORM::TEX2, light, 1);
+		setUniform("Depth", nsfw::UNIFORM::TEX2, &depth, 1);
+		setUniform("Light", nsfw::UNIFORM::TEX2, &light, 1);
 
 		//setUniform("TexelScalar", nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
 
