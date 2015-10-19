@@ -18,6 +18,7 @@ nsfw::GL_HANDLE nsfw::Assets::getVERIFIED(const AssetKey &key) const
 	if (!handles.count(key))
 	{
 		std::cerr << "Asset Key not found: <" << TYPE_NAMES[key.first] << ">" << key.second << std::endl;
+		assert(false);
 		return 0;
 	}
 #endif
@@ -31,6 +32,7 @@ bool nsfw::Assets::setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HAN
 	if (handles.count(key))
 	{
 		std::cerr << "Asset Key already exists: <" << TYPE_NAMES[key.first] << ">" << key.second << " ignoring." << std::endl;
+		assert(false);
 		return false;
 	}
 	else std::cerr << "Asset Key successfully created: <" << TYPE_NAMES[key.first] << ">" << key.second << std::endl;
@@ -45,7 +47,8 @@ unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * p
 	std::string contents = std::string(std::istreambuf_iterator<char>(stream), std::istreambuf_iterator<char>());
 	if (contents.length() == 0)
 	{
-		std::cout << "Error loading shader file " << path << "\ntext:\n" << contents << std::endl;
+		std::cerr << "Error loading shader file " << path << "\ntext:\n" << contents << std::endl;
+		assert(false);
 		return 0;
 	}
 
@@ -65,6 +68,7 @@ unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * p
 		glGetShaderInfoLog(shader, length, 0, log);
 		std::cout << "Error compiling shader.\n" << log << std::endl;
 		delete[] log;
+		assert(false);
 	}
 
 	delete[] code;
@@ -75,10 +79,6 @@ unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * p
 
 bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize, const unsigned * tris, unsigned tsize)
 {
-	//ASSET_LOG(GL_HANDLE_TYPE::VBO);
-	//ASSET_LOG(GL_HANDLE_TYPE::IBO);
-	//ASSET_LOG(GL_HANDLE_TYPE::VAO);
-	//ASSET_LOG(GL_HANDLE_TYPE::SIZE);
 	//TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
 	GLuint vao, vbo, ibo;
 	glGenVertexArrays(1, &vao);
@@ -87,10 +87,16 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
+
+	glGetError();
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vsize, verts, GL_STATIC_DRAW);
+	CheckGLError();
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+	glGetError();
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tsize, tris, GL_STATIC_DRAW);
+	CheckGLError();
 
 	/*
 	Vertex struct layout
@@ -114,6 +120,7 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
+	//Asset<TEXTURE> diffuseMap = "JohnDiffuseMap";
 	setINTERNAL(VAO, name, vao);
 	setINTERNAL(VBO, name, vbo);
 	setINTERNAL(IBO, name, ibo);
@@ -163,6 +170,7 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 		bool invalidEnum = status == GL_INVALID_ENUM;
 		bool invalidValue = status == GL_INVALID_VALUE;
 		printf("Framebuffer Error!\n");
+		assert(false);
 		return false;
 	}
 	glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -173,16 +181,19 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 bool nsfw::Assets::makeRBO(const char * name, unsigned w, unsigned h, unsigned depth, const char * pixels)
 {
 	GLuint rbo;
+	glGetError();
 	glGenRenderbuffers(1, &rbo);
 	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
 	glRenderbufferStorage(GL_RENDERBUFFER, depth, w, h);
 	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	CheckGLError();
 	setINTERNAL(RBO, name, rbo);
 	return true;
 }
 
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
 {
+	glGetError();
 	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
@@ -199,16 +210,8 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	CheckGLError();
 
-	GLenum error = glGetError();
-	if (error != GL_NO_ERROR)
-	{
-		bool invalidEnum = error == GL_INVALID_ENUM;
-		bool invalidValue = error == GL_INVALID_VALUE;
-		printf("error with texture.\n");
-		glBindTexture(GL_TEXTURE_2D, 0);
-		return false;
-	}
 	glBindTexture(GL_TEXTURE_2D, 0);
 	setINTERNAL(TEXTURE, name, tex);
 	return true;
@@ -231,6 +234,7 @@ bool nsfw::Assets::loadTexture(const char * name, const char * path)
 	if (data == nullptr)
 	{
 		std::cout << "error loading texture.\n" << stbi_failure_reason();
+		assert(false);
 		return false;
 	}
 
@@ -272,10 +276,10 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 		glGetProgramInfoLog(shader, length, 0, log);
 		std::cout << "Error linking shader program.\n" << log << std::endl;
 		delete[] log;
+		assert(false);
 		return false;
 	}
-
-	setINTERNAL(GL_HANDLE_TYPE::SHADER, name, shader);
+	setINTERNAL(SHADER, name, shader);
 	return true;
 }
 
@@ -293,10 +297,12 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	if (!success)
 	{
 		std::cout << "Error loading FBX file:\n";
+		assert(false);
 		return false;
 	}
 
 	//load meshes
+	assert(file.getMeshCount() > 0);
 	for (int meshIndex = 0; meshIndex < file.getMeshCount(); meshIndex++)
 	{
 		FBXMeshNode* mesh = file.getMeshByIndex(meshIndex);
@@ -335,8 +341,10 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 	if (err.length() != 0)
 	{
 		std::cout << "Error loading OBJ file:\n" << err << std::endl;
+		assert(false);
 		return false;
 	}
+	assert(shapes.size() > 0);
 	//load meshes
 	for (int i = 0; i < shapes.size(); i++)
 	{
@@ -421,6 +429,43 @@ void nsfw::Assets::term()
 		}
 	}
 	handles.clear();
+}
+
+void nsfw::Assets::CheckGLError()
+{
+	std::string error;
+	switch (glGetError())
+	{
+	case GL_NO_ERROR:
+		error = "GL_NO_ERROR";
+		break;
+	case GL_INVALID_ENUM:
+		error = "GL_INVALID_ENUM";
+		break;
+	case GL_INVALID_VALUE:
+		error = "GL_INVALID_VALUE";
+		break;
+	case GL_INVALID_OPERATION:
+		error = "GL_INVALID_OPERATION";
+		break;
+	case GL_INVALID_FRAMEBUFFER_OPERATION:
+		error = "GL_INVALID_FRAMEBUFFER_OPERATION";
+		break;
+	case GL_OUT_OF_MEMORY:
+		error = "GL_OUT_OF_MEMORY";
+		break;
+	case GL_STACK_UNDERFLOW:
+		error = "GL_STACK_UNDERFLOW";
+		break;
+	case GL_STACK_OVERFLOW:
+		error = "GL_STACK_OVERFLOW";
+		break;
+	}
+	if (error != "GL_NO_ERROR")
+	{
+		std::cerr << printf("GL error found: %s\n", error);
+		assert(false);
+	}
 }
 
 

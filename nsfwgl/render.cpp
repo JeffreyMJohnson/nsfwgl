@@ -18,7 +18,7 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 		glUniform4fv(location, 1, (GLfloat*)value);
 		break;
 	case nsfw::UNIFORM::MAT4: 
-		glUniformMatrix4fv(location, 1, false, (const GLfloat*)value);
+		glUniformMatrix4fv(location, 1, false, (GLfloat*)value);
 		break;
 	case nsfw::UNIFORM::INT1:
 		glUniform1i(location, *(GLint*)value);

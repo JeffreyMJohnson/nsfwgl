@@ -135,6 +135,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="Camera.cpp" />
     <ClCompile Include="main.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -153,6 +154,10 @@
     <None Include="shaders\Gpass_vert.glsl" />
     <None Include="shaders\Light_pass_directional_frag.glsl" />
     <None Include="shaders\Light_pass_directional_vert.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="shaders\test_frag.glsl" />
+    <Text Include="shaders\test_vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

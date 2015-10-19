@@ -142,5 +142,7 @@ namespace nsfw
 		void init();
 		// clear out all of the opengl handles!
 		void term();
+
+		static void CheckGLError();
 	};
  }

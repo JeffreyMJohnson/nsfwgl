@@ -42,9 +42,11 @@ void DeferredApplication::onInit()
 	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
+	//a.loadShader("CompPass", "./shaders/test_vert.glsl", "./shaders/test_frag.glsl");
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
+
 }
 
 void DeferredApplication::onPlay()
@@ -54,7 +56,11 @@ void DeferredApplication::onPlay()
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 
-	m_camera->lookAt(glm::vec3(10), glm::vec3(0), glm::vec3(0,1,0));
+	m_camera->StartupPerspective(glm::pi<float>() * .25f, (float)1280 / 720, .1f, 1000.0f);
+	m_camera->SetView(glm::vec3(10), glm::vec3(0), glm::vec3(0, 1, 0));
+
+	//mTestCube = new Geometry;
+	//mTestCube->mesh = "Cube";
 
 	m_light->color      = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
@@ -79,7 +85,7 @@ void DeferredApplication::onStep()
 {
 	//TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
 	m_light->update();
-	m_camera->update();
+	m_camera->Update(nsfw::Window::instance().getTime());
 	m_soulspear->update();
 	
 	//TODO_D("Draw all of our renderpasses!");

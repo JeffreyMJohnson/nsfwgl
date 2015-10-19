@@ -20,6 +20,8 @@ class DeferredApplication : public nsfw::Application
 	GPass   *m_geometryPass;
 	LPassD  *m_directionalLightPass;
 
+	Geometry* mTestCube;
+
 public:
 	void onInit();
 	void onStep();

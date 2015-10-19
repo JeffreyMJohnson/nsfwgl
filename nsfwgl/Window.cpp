@@ -6,7 +6,8 @@ void nsfw::Window::init(unsigned width, unsigned height)
 	bool success = glfwInit();
 	if (!success)
 	{
-		std::cout << "Error initializing GLFW.\n";
+		std::cerr << "Error initializing GLFW.\n";
+		assert(false);
 		return;
 	}
 	this->width = width;
@@ -14,7 +15,8 @@ void nsfw::Window::init(unsigned width, unsigned height)
 	window = glfwCreateWindow(this->width, this->height, "NSFWGL Window" , nullptr, nullptr);
 	if (window == nullptr)
 	{
-		std::cout << "Error creating context window\n";
+		std::cerr << "Error creating context window\n";
+		assert(false);
 		return;
 	}
 
@@ -23,8 +25,9 @@ void nsfw::Window::init(unsigned width, unsigned height)
 
 	if (ogl_LoadFunctions() == ogl_LOAD_FAILED)
 	{
-		std::cout << "Error loading ogl.\n";
+		std::cerr << "Error loading ogl.\n";
 		delete window;
+		assert(false);
 		return;
 	}
 

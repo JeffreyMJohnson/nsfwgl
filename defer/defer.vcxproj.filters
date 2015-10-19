@@ -27,6 +27,9 @@
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Camera.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPass.h">
@@ -70,5 +73,13 @@
     <None Include="shaders\Light_pass_directional_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="shaders\test_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </Text>
+    <Text Include="shaders\test_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>
