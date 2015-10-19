@@ -121,6 +121,8 @@ namespace nsfw
 		// should call makeTexture nTextures number of times
 		bool makeFBO(const char *name, unsigned w, unsigned h, unsigned nTextures, const char *names[], const unsigned depths[]);
 
+		bool makeRBO(const char* name, unsigned w, unsigned h, unsigned depth, const char *pixels = nullptr);
+
 		// should allocate space for a texture, but not necessarily set its data
 		bool makeTexture(const char *name, unsigned w, unsigned h, unsigned depth, const char *pixels = nullptr);
 

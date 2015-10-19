@@ -87,7 +87,7 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 
 	glBindVertexArray(vao);
 	glBindBuffer(GL_ARRAY_BUFFER, vbo);
-	glBufferData(GL_ARRAY_BUFFER, vsize, verts, GL_STATIC_DRAW);
+	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vsize, verts, GL_STATIC_DRAW);
 
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tsize, tris, GL_STATIC_DRAW);
@@ -136,13 +136,18 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	std::vector<GLenum> drawBuffers;
 	for (int i = 0; i < nTextures; i++)
 	{
-		makeTexture(names[i], w, h, depths[i], nullptr);
+		std::string name = names[i];
+		int depth = depths[i];
+
 		if (depths[i] == GL_DEPTH_COMPONENT)
 		{
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
+			makeRBO(names[i], w, h, depth);
+			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, get(RBO, names[i]));
+
 		}
 		else
 		{
+			makeTexture(names[i], w, h, depths[i]);
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
 			drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
@@ -165,27 +170,36 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	return true;
 }
 
+bool nsfw::Assets::makeRBO(const char * name, unsigned w, unsigned h, unsigned depth, const char * pixels)
+{
+	GLuint rbo;
+	glGenRenderbuffers(1, &rbo);
+	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
+	glRenderbufferStorage(GL_RENDERBUFFER, depth, w, h);
+	glBindRenderbuffer(GL_RENDERBUFFER, 0);
+	setINTERNAL(RBO, name, rbo);
+	return true;
+}
+
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
 {
 	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
 	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
 	glGenTextures(1, &tex);
-
 	glBindTexture(GL_TEXTURE_2D, tex);
-	if (nullptr == pixels && depth != GL_DEPTH_COMPONENT)
+	if (pixels)
 	{
-		glTexStorage2D(GL_TEXTURE_2D, 1, depth, 1280, 720);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
 	}
 	else
 	{
-		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexStorage2D(GL_TEXTURE_2D, 1, depth, w, h);
 	}
-	
+
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+
 	GLenum error = glGetError();
 	if (error != GL_NO_ERROR)
 	{
@@ -283,13 +297,13 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	}
 
 	//load meshes
-	for (int i = 0; i < file.getMeshCount(); i++)
+	for (int meshIndex = 0; meshIndex < file.getMeshCount(); meshIndex++)
 	{
-		FBXMeshNode* mesh = file.getMeshByIndex(0);
+		FBXMeshNode* mesh = file.getMeshByIndex(meshIndex);
 
-		for (int i = 0; i < mesh->m_vertices.size(); i++)
+		for (int verticesIndex = 0; verticesIndex < mesh->m_vertices.size(); verticesIndex++)
 		{
-			auto xVert = mesh->m_vertices[i];
+			auto xVert = mesh->m_vertices[verticesIndex];
 			Vertex v;
 			v.position = xVert.position;
 			v.normal = xVert.normal;
