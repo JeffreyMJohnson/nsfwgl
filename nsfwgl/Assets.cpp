@@ -92,10 +92,11 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vsize, verts, GL_STATIC_DRAW);
 	CheckGLError();
 
+	//may have reset the bound buffer here.. may need to move after vertexattribute calls
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	glGetError();
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, tsize, tris, GL_STATIC_DRAW);
+	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(unsigned int) * tsize, tris, GL_STATIC_DRAW);
 	CheckGLError();
 
 	/*
