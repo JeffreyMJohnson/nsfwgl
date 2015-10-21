@@ -2,7 +2,7 @@
 
 #include "../nsfwgl/nsfw.h"
 
-struct Camera;
+class Camera;
 struct Geometry;
 struct LightD;
 

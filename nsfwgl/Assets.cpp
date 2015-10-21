@@ -1,5 +1,5 @@
 #include "nsfw.h"
-#include <array>
+//#include <array>
 
 using namespace nsfw::ASSET;
 
