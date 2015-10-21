@@ -43,6 +43,7 @@ void nsfw::Window::step()
 void nsfw::Window::term()
 {
 	glfwDestroyWindow(window);
+	glfwTerminate();
 }
 
 float nsfw::Window::getTime() const
