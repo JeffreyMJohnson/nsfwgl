@@ -36,12 +36,13 @@ public:
 		c.GetProjection();
 
 		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
+		setUniform("ProjectionView", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetViewProjection()));
 		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
 
 		setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
-		setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
+		//setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
 		//setUniform("Specular", nsfw::UNIFORM::TEX2, g.specular, 2);
 
 		//setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);

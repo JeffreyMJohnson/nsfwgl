@@ -65,7 +65,9 @@ void nsfw::Window::init(unsigned width, unsigned height)
 
 void nsfw::Window::step()
 {
-	//TODO_D("GLFW poll events and swap buffers is all that should really be here! No GL!");
+	//update deltaTime
+	mTimer.Update();
+
 	glfwPollEvents();
 	glfwSwapBuffers(window);
 }
@@ -76,9 +78,14 @@ void nsfw::Window::term()
 	glfwTerminate();
 }
 
-float nsfw::Window::getTime() const
+float nsfw::Window::getTime()
 {
-	return glfwGetTime();
+	return mTimer.GetTotalTime();
+}
+
+float nsfw::Window::GetDeltaTime()
+{
+	return mTimer.GetDeltaTime();
 }
 
 bool nsfw::Window::getKey(unsigned k) const

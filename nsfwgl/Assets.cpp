@@ -324,7 +324,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	FBXFile file;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
-	bool success = file.load(path, FBXFile::UNITS_METER, true, false, false);
+	bool success = file.load(path, FBXFile::UNITS_CENTIMETER, true, false, true);
 	if (!success)
 	{
 		std::cout << "Error loading FBX file:\n";
@@ -356,7 +356,25 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 	for (int i = 0; i < file.getTextureCount(); i++)
 	{
 		FBXTexture* tex = file.getTextureByIndex(i);
-		loadTexture(tex->name.c_str(), tex->path.c_str());
+		//loadTexture(tex->name.c_str(), tex->path.c_str());
+		assert(nullptr != tex->data && "error loading texture.\n");
+		uint imageFormat = tex->format;
+		switch (imageFormat)
+		{
+		case 1: 
+			imageFormat = GL_RED; 
+			break;
+		case 2: 
+			imageFormat = GL_RG; 
+			break;
+		case 3: 
+			imageFormat = GL_RGB; 
+			break;
+		case 4: 
+			imageFormat = GL_RGBA; 
+			break;
+		}
+		makeTexture(tex->name.c_str(), tex->width, tex->height, imageFormat, (char*)tex->data);
 	}
 	file.unload();
 	return true;

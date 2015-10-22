@@ -22,6 +22,8 @@ class DeferredApplication : public nsfw::Application
 
 	Geometry* mTestCube;
 
+	void UpdateFlyCamControls(float deltaTime, float moveSpeed);
+
 public:
 	void onInit();
 	void onStep();

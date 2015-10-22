@@ -3,6 +3,8 @@
 #include <glm\ext.hpp>
 #include <glm\gtx\transform.hpp>
 
+
+
 class Camera
 {
 public:
@@ -16,6 +18,7 @@ public:
 	void Update(const float deltaTime);
 
 	bool SetView(const glm::vec3 position, const glm::vec3 target, const glm::vec3 up);
+
 
 	const glm::mat4 GetWorldTransform();
 

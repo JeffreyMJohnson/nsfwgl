@@ -4,10 +4,13 @@
 #include "Geometry.h"
 #include "Light.h"
 #include "Camera.h"
+#include "Keyboard.h"
 
 #include "GPass.h"
 #include "CPass.h"
 #include "LPassD.h"
+
+
 
 using namespace nsfw;
 
@@ -37,8 +40,10 @@ void DeferredApplication::onInit()
 	//
 
 	m_camera = new Camera;
-	m_camera->StartupPerspective(glm::pi<float>() * .25f, (float)1280 / 720, .1f, 1000.0f);
-	m_camera->SetView(glm::vec3(10), glm::vec3(0), glm::vec3(0, 1, 0));
+	m_camera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
+	m_camera->SetView(glm::vec3(0,0,10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+
+	Keyboard::Init();
 
 	// Setup FBOs
 	const char *gpassTextureNames[] = { "GPassAlbedo","GPassPosition","GPassNormal","GPassDepth" };
@@ -59,6 +64,7 @@ void DeferredApplication::onPlay()
 {
 	//TODO_D("Initialize our scene objects!");
 	
+	
 	m_light     = new LightD;
 	m_soulspear = new Geometry;
 
@@ -68,6 +74,8 @@ void DeferredApplication::onPlay()
 	m_light->color      = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
 
+	m_soulspear->mesh = "Cube";
+	m_soulspear->tris = "Cube";
 	m_soulspear->mesh	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris	   = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->diffuse   = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
@@ -86,9 +94,11 @@ void DeferredApplication::onPlay()
 
 void DeferredApplication::onStep()
 {
-	//TODO_D("Update our game objects-- IF THEY EVEN DO ANYTHING");
+	float moveSpeed = 10;
+
 	m_light->update();
 	m_camera->Update(nsfw::Window::instance().getTime());
+	UpdateFlyCamControls(nsfw::Window::instance().GetDeltaTime(),moveSpeed);
 	m_soulspear->update();
 	
 	//TODO_D("Draw all of our renderpasses!");
@@ -114,4 +124,33 @@ void DeferredApplication::onTerm()
 	delete m_compositePass;
 	delete m_geometryPass;
 	delete m_directionalLightPass;
+}
+
+void DeferredApplication::UpdateFlyCamControls(float deltaTime, float moveSpeed)
+{
+	std::cout << moveSpeed << std::endl;
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_W) || Keyboard::IsKeyRepeat(Keyboard::KEY_W))
+	{
+		m_camera->Move(moveSpeed * deltaTime);
+	}
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_X) || Keyboard::IsKeyRepeat(Keyboard::KEY_X))
+	{
+		m_camera->Move(-moveSpeed * deltaTime);
+	}
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_A) || Keyboard::IsKeyRepeat(Keyboard::KEY_A))
+	{
+		m_camera->Slide(-moveSpeed * deltaTime, 0);
+	}
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_D) || Keyboard::IsKeyRepeat(Keyboard::KEY_D))
+	{
+		m_camera->Slide(moveSpeed * deltaTime, 0);
+	}
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_E) || Keyboard::IsKeyRepeat(Keyboard::KEY_E))
+	{
+		m_camera->Slide(0, moveSpeed * deltaTime);
+	}
+	if (Keyboard::IsKeyPressed(Keyboard::KEY_C) || Keyboard::IsKeyRepeat(Keyboard::KEY_C))
+	{
+		m_camera->Slide(0, -moveSpeed * deltaTime);
+	}
 }

@@ -24,7 +24,6 @@ bool Camera::StartupPerspective(const float fov, const float aspectRatio, const 
 
 void Camera::Update(const float deltaTime)
 {
-
 }
 
 const glm::mat4 Camera::GetWorldTransform()
@@ -69,3 +68,4 @@ bool Camera::SetView(const glm::vec3 position, const glm::vec3 target, const glm
 
 	return true;
 }
+
