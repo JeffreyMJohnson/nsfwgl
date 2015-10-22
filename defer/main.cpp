@@ -82,7 +82,7 @@ void DeferredApplication::onPlay()
 	//m_geometryPass = new GPass("GeometryPassPhong", "Screen");
 	m_directionalLightPass  = new LPassD("LightPassDirectional", "LightPass");
 	m_compositePass			= new CPass ("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
-}
+}	
 
 void DeferredApplication::onStep()
 {
@@ -101,7 +101,7 @@ void DeferredApplication::onStep()
 	m_directionalLightPass->post();
 
 	m_compositePass->prep();
-	m_compositePass->draw(*m_camera, *m_soulspear);
+	m_compositePass->draw();
 	m_compositePass->post();
 }
 

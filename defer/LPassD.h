@@ -34,9 +34,9 @@ public:
 
 		setUniform("LightDirection", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
 		setUniform("LightColor",     nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
-		setUniform("positionTexture", nsfw::UNIFORM::TEX2, &position, 0);
+		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
 
-		setUniform("normalTexture", nsfw::UNIFORM::TEX2, &normal, 1);
+		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
 		//setUniform("TexelScalar",    nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
 
 		//setUniform("positionTexture", TEXTURE, )
@@ -46,6 +46,6 @@ public:
 		unsigned quadNumtris    = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");
 
 		glBindVertexArray(quadVAOHandle);
-		glDrawArrays(GL_TRIANGLES, 0, quadNumtris);
+		glDrawElements(GL_TRIANGLES, quadNumtris, GL_UNSIGNED_INT, 0);
 	}
 };

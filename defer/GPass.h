@@ -11,7 +11,7 @@ public:
 	void prep()
 	{
 		
-		glBindBuffer(GL_FRAMEBUFFER, *fbo);
+		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		glEnable(GL_DEPTH_TEST);
 		glClearColor(.25f, .25f, .25f, 1);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -23,7 +23,7 @@ public:
 	void post()
 	{
 		glDisable(GL_DEPTH_TEST);
-		glBindBuffer(GL_FRAMEBUFFER, 0);
+		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
 		glBindVertexArray(0);
 		//TODO_D("Unset any gl settings"); 
@@ -40,9 +40,8 @@ public:
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
 
-		setUniform("Diffuse", nsfw::UNIFORM::TEX2, &g.diffuse, 0);
-
-		//setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
+		setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
+		setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
 		//setUniform("Specular", nsfw::UNIFORM::TEX2, g.specular, 2);
 
 		//setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);

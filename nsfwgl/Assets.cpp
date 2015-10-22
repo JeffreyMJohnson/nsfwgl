@@ -142,8 +142,10 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	glBindFramebuffer(GL_FRAMEBUFFER, fbo);
 
 	std::vector<GLenum> drawBuffers;
+	int colorAttachmentCount = 0;
 	for (int i = 0; i < nTextures; i++)
 	{
+		/*
 		std::string name = names[i];
 		int depth = depths[i];
 
@@ -159,7 +161,15 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
 			drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
 		}
+		*/
+		makeTexture(names[i], w, h, depths[i]);
 
+		GLenum attachment = (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + colorAttachmentCount);
+		glFramebufferTexture(GL_FRAMEBUFFER, attachment, get(TEXTURE, names[i]), 0);
+		if (attachment != GL_DEPTH_ATTACHMENT)
+		{
+			drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + colorAttachmentCount++);
+		}
 	}
 	glDrawBuffers(drawBuffers.size(), drawBuffers.data());
 
@@ -200,6 +210,25 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	GLuint tex;
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
+	if (nullptr == pixels && depth != GL_DEPTH_COMPONENT)
+	{
+		GLenum status = glGetError();
+		assert(status == GL_NO_ERROR);
+
+		glTexStorage2D(GL_TEXTURE_2D, 1, depth, w, h);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+
+		assert(status == GL_NO_ERROR);
+	}
+	else   // otherwise, we're creating a normal texture
+	{
+		// Does this really work?
+		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+	}
+	/*
 	if (pixels)
 	{
 		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
@@ -211,6 +240,7 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+	*/
 	CheckGLError();
 
 	glBindTexture(GL_TEXTURE_2D, 0);

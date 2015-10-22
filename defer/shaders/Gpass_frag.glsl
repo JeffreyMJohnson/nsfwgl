@@ -25,7 +25,7 @@ void main()
 	//specular = pow(specular, specPower);
 	//float d = max(0, dot( normalize(vNormal.xyz), vec3(0,1,0)));
 
-	gpassAlbedo = texture(Diffuse,vTexCoord).xyz;
+	gpassAlbedo = vec3(1);// texture(Diffuse, vTexCoord).xyz;
 	gpassPosition = vPosition.xyz;
 	gpassNormal = vNormal.xyz;
 }

@@ -20,7 +20,6 @@ void main()
 
 	LightOutput = LightColor * diffuse;
 
-
 	//vec3 eye = normalize(cameraPosition - vPosition.xyz);
 	//vec3 reflect = reflect(-lightDirection, vNormal.xyz);
 	//float specular = max(0, dot(eye,reflect));
