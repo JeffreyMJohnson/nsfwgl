@@ -13,6 +13,6 @@ void main()
 	vec3 albedo = texture(Albedo, vTexCoord).rgb;
 	
 	//FragColor = vec4(albedo * light, 1);
-	FragColor = vec4(albedo, 1);
+	FragColor = vec4(albedo * light, 1);
 	//FragColor = vec4(vTexCoord, albedo.z, 1);
 }

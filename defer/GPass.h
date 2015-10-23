@@ -13,12 +13,9 @@ public:
 		
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		glEnable(GL_DEPTH_TEST);
-		glClearColor(.25f, .25f, .25f, 1);
+		glClearColor(0,0,0,0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(*shader);
-
-
-		//TODO_D("glUseProgram, glClear, glBindFrameBuffer, glViewPort, glEnable etc..."); 
 	}
 	void post()
 	{
@@ -26,7 +23,6 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
 		glBindVertexArray(0);
-		//TODO_D("Unset any gl settings"); 
 	}
 
 	GPass(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
@@ -36,7 +32,6 @@ public:
 		c.GetProjection();
 
 		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
-		setUniform("ProjectionView", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetViewProjection()));
 		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 

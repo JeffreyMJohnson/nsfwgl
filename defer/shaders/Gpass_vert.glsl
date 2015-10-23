@@ -12,7 +12,6 @@ out vec2 vTexCoord;
 
 uniform mat4 Projection;
 uniform mat4 View;
-uniform mat4 ProjectionView;
 uniform mat4 Model;
 
 void main() 
@@ -20,5 +19,5 @@ void main()
 	vPosition = View * Position;
 	vNormal = normalize(View * Normal);
 	vTexCoord = TexCoord;
-	gl_Position = ProjectionView * Position;
+	gl_Position = Projection * View * Position;
 }

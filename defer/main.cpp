@@ -32,12 +32,10 @@ void DeferredApplication::onInit()
 	auto &a = nsfw::Assets::instance();
 
 	// Load Shaders
-	//a.loadShader("CompPass", "./shaders/test_vert.glsl", "./shaders/test_frag.glsl");
 	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
 	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
-	//
 
 	m_camera = new Camera;
 	m_camera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
@@ -71,7 +69,7 @@ void DeferredApplication::onPlay()
 	//mTestCube = new Geometry;
 	//mTestCube->mesh = "Cube";
 
-	m_light->color      = glm::vec3(1, 1, 1);
+	m_light->color      = glm::vec3(0,1,1);
 	m_light->direction = glm::normalize(glm::vec3(1, 1, 0));
 
 	m_soulspear->mesh = "Cube";
@@ -128,7 +126,6 @@ void DeferredApplication::onTerm()
 
 void DeferredApplication::UpdateFlyCamControls(float deltaTime, float moveSpeed)
 {
-	std::cout << moveSpeed << std::endl;
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_W) || Keyboard::IsKeyRepeat(Keyboard::KEY_W))
 	{
 		m_camera->Move(moveSpeed * deltaTime);
