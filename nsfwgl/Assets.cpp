@@ -145,23 +145,6 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	int colorAttachmentCount = 0;
 	for (int i = 0; i < nTextures; i++)
 	{
-		/*
-		std::string name = names[i];
-		int depth = depths[i];
-
-		if (depths[i] == GL_DEPTH_COMPONENT)
-		{
-			makeRBO(names[i], w, h, depth);
-			glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, get(RBO, names[i]));
-
-		}
-		else
-		{
-			makeTexture(names[i], w, h, depths[i]);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D, get(TEXTURE, names[i]), 0);
-			drawBuffers.push_back(GL_COLOR_ATTACHMENT0 + i);
-		}
-		*/
 		makeTexture(names[i], w, h, depths[i]);
 
 		GLenum attachment = (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + colorAttachmentCount);
