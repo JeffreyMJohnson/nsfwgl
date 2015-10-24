@@ -27,13 +27,16 @@ public:
 	}
 
 
-	void draw(const Camera &c, const LightD &l)
+	void draw(Camera &c, const LightD &l)
 	{
 		//setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getProjection()));
 		//setUniform("View",       nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.getView()));
 
 		setUniform("LightDirection", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
 		setUniform("LightColor",     nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
+		float specPower = 128;
+		setUniform("SpecPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
 		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
 
 		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);

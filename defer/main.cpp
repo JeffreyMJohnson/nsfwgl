@@ -22,7 +22,7 @@ int main()
 	d.play();
 	d.term();
 
-	system("pause");
+	//system("pause");
 }
 
 
@@ -39,7 +39,7 @@ void DeferredApplication::onInit()
 
 	m_camera = new Camera;
 	m_camera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
-	m_camera->SetView(glm::vec3(0, 0, 10), glm::vec3(0, 0, 0), glm::vec3(0, 1, 0));
+	m_camera->SetView(glm::vec3(0, 2, 5), glm::vec3(0, 2, 0), glm::vec3(0, 1, 0));
 
 	Keyboard::Init();
 
