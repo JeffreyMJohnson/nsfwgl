@@ -5,10 +5,11 @@ in vec2 vTexCoord;
 out vec3 LightOutput;
 
 //direction in view-space
-uniform vec3 LightDirection = vec3(0, 1, 0);
-uniform vec3 LightColor = vec3(0, 1, 0);
-uniform vec3 CameraPosition = vec3(0, 0, 10);
-uniform float SpecPower = 128;
+uniform vec3 LightDirection;
+uniform vec3 LightColor;
+uniform vec3 CameraPosition;
+uniform float specPower;
+uniform vec3 ambient;
 
 uniform sampler2D positionTexture;
 uniform sampler2D normalTexture;
@@ -22,9 +23,7 @@ void main()
 	vec3 eye = normalize(CameraPosition - position.xyz);
 	vec3 reflect = reflect(-LightDirection, normal.xyz);
 	float specular = max(0, dot(eye, reflect));
-	specular = pow(specular, SpecPower);
-
-	vec3 ambient = vec3(.1f,.1f, 0);
+	specular = pow(specular, specPower);
 
 	LightOutput = vec3(ambient + LightColor * diffuse + LightColor * specular);
 }

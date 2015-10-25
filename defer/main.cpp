@@ -52,7 +52,6 @@ void DeferredApplication::onInit()
 	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
 	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths);
 
-
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
 
@@ -60,24 +59,17 @@ void DeferredApplication::onInit()
 
 void DeferredApplication::onPlay()
 {
-	//TODO_D("Initialize our scene objects!");
-
-
 	m_light = new LightD;
 	m_soulspear = new Geometry;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0,1,0));
+	m_light->direction = glm::normalize(glm::vec3(0,1,.25f));
 
 	m_soulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
-	m_soulspear->normal = "soulspear_normal.tga";		// These handle names may not be what your loadFBX sets 
-	m_soulspear->specular = "soulspear_specular.tga";	// them as! (Assets will report what the key names are though)
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
-
-	//TODO_D("Initialize our render passes!");
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass = new LPassD("LightPassDirectional", "LightPass");

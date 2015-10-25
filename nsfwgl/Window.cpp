@@ -11,7 +11,6 @@ void APIENTRY oglErrorDefaultCallback(GLenum source,
 {
 	// if 'GL_DEBUG_OUTPUT_SYNCHRONOUS' is enabled, you can place a
 	// breakpoint here and the callstack should reflect the problem location!
-
 	std::cerr << message << std::endl;
 }
 
@@ -57,7 +56,7 @@ void nsfw::Window::init(unsigned width, unsigned height)
 	}
 	else
 	{
-		std::cerr << "Failed to subscribe to glDebugMessageCallback." << std::endl;
+		assert(false && "Failed to subscribe to glDebugMessageCallback.");
 	}
 #endif
 
