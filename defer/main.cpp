@@ -63,7 +63,9 @@ void DeferredApplication::onPlay()
 	m_soulspear = new Geometry;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0,1,.25f));
+	m_light->direction = glm::normalize(glm::vec3(0, -1,0));//this is -position!
+	m_light->ambientIntensity = 1;
+	m_light->diffuseIntensity = 1;
 
 	m_soulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris = "SoulSpear_Low:SoulSpear_Low1";
