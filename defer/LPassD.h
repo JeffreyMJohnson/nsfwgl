@@ -5,7 +5,7 @@
 
 class LPassD : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal;
+	nsfw::Asset<nsfw::ASSET::TEXTURE> position, specular, normal;
 public:
 	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
 
@@ -42,7 +42,6 @@ public:
 		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
 		//setUniform("TexelScalar",    nsfw::UNIFORM::MAT4, glm::value_ptr(nsfw::Window::instance().getTexelAdjustmentMatrix()));
 
-		//setUniform("positionTexture", TEXTURE, )
 
 
 		unsigned quadVAOHandle  = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
