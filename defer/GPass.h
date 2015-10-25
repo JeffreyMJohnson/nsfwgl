@@ -31,23 +31,13 @@ public:
 	{
 		c.GetProjection();
 
+		//vert shader uniforms
 		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
 		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
-
+		//frad shader uniforms
 		setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
-		//setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
-		//setUniform("Specular", nsfw::UNIFORM::TEX2, g.specular, 2);
-
-		//setUniform("SpecularPower", nsfw::UNIFORM::FLO1, (void*)&g.specPower);
-
-		//nsfw::Assets::instance().get(g.mesh);
-		//nsfw::Assets::instance().get(g.tris);
-
-	   // GLuint vao = *g.mesh;
-		//GLuint size = *g.tris;
-
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);

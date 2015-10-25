@@ -1,7 +1,6 @@
 #include "nsfw.h"
 
 
-// Each Case should set up a uniform using the pass parameters
 bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, const void *value, unsigned count, bool normalize) 
 {
 	glGetError();
@@ -20,6 +19,7 @@ bool nsfw::RenderPass::setUniform(const char *name, nsfw::UNIFORM::TYPE type, co
 	case nsfw::UNIFORM::MAT4: 
 		glUniformMatrix4fv(location, 1, false, (GLfloat*)value);
 		break;
+	case nsfw::UNIFORM::BOOL://same as int1 so just let fall through #hack
 	case nsfw::UNIFORM::INT1:
 		glUniform1i(location, *(GLint*)value);
 		break;

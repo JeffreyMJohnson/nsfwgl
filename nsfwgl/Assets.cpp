@@ -79,7 +79,6 @@ unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * p
 
 bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize, const unsigned * tris, unsigned tsize)
 {
-	//TODO_D("Should generate VBO, IBO, VAO, and SIZE using the parameters, storing them in the 'handles' map.\nThis is where vertex attributes are set!");
 	GLuint vao, vbo, ibo;
 	glGenVertexArrays(1, &vao);
 	glGenBuffers(1, &vbo);
@@ -92,7 +91,6 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBufferData(GL_ARRAY_BUFFER, sizeof(Vertex) * vsize, verts, GL_STATIC_DRAW);
 	CheckGLError();
 
-	//may have reset the bound buffer here.. may need to move after vertexattribute calls
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
 	glGetError();
@@ -121,7 +119,6 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
 
-	//Asset<TEXTURE> diffuseMap = "JohnDiffuseMap";
 	setINTERNAL(VAO, name, vao);
 	setINTERNAL(VBO, name, vbo);
 	setINTERNAL(IBO, name, ibo);
@@ -131,11 +128,6 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 
 bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned nTextures, const char * names[], const unsigned depths[])
 {
-	ASSET_LOG(GL_HANDLE_TYPE::FBO);
-	//TODO_D("Create an FBO! Array parameters are for the render targets, which this function should also generate!\n
-	//use makeTexture.\n
-	//NOTE THAT THERE IS NO FUNCTION SETUP FOR MAKING RENDER BUFFER OBJECTS.");
-
 	// setup framebuffer
 	GLuint fbo;
 	glGenFramebuffers(1, &fbo);
@@ -172,24 +164,9 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	return true;
 }
 
-bool nsfw::Assets::makeRBO(const char * name, unsigned w, unsigned h, unsigned depth, const char * pixels)
-{
-	GLuint rbo;
-	glGetError();
-	glGenRenderbuffers(1, &rbo);
-	glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-	glRenderbufferStorage(GL_RENDERBUFFER, depth, w, h);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	CheckGLError();
-	setINTERNAL(RBO, name, rbo);
-	return true;
-}
-
 bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
 {
 	glGetError();
-	ASSET_LOG(GL_HANDLE_TYPE::TEXTURE);
-	//TODO_D("Allocate a texture using the given space/dimensions. Should work if 'pixels' is null, so that you can use this same function with makeFBO\n note that Dept will use a GL value.");
 	GLuint tex;
 	glGenTextures(1, &tex);
 	glBindTexture(GL_TEXTURE_2D, tex);
@@ -206,24 +183,10 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	}
 	else   // otherwise, we're creating a normal texture
 	{
-		// Does this really work?
 		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 	}
-	/*
-	if (pixels)
-	{
-		glTexImage2D(GL_TEXTURE_2D, 0, depth, w, h, 0, depth, GL_UNSIGNED_BYTE, pixels);
-	}
-	else
-	{
-		glTexStorage2D(GL_TEXTURE_2D, 1, depth, w, h);
-	}
-
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	*/
 	CheckGLError();
 
 	glBindTexture(GL_TEXTURE_2D, 0);
@@ -233,7 +196,6 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 
 bool nsfw::Assets::loadTexture(const char * name, const char * path)
 {
-	//TODO_D("This should load a texture from a file, using makeTexture to perform the allocation.\nUse STBI, and make sure you switch the format STBI provides to match what openGL needs!");
 	int imageWidth = 0, imageHeight = 0, imageFormat = 0;
 	const char* data = (const char*)stbi_load(path, &imageWidth, &imageHeight, &imageFormat, STBI_default);
 
@@ -260,8 +222,6 @@ bool nsfw::Assets::loadTexture(const char * name, const char * path)
 
 bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char * fpath)
 {
-	//ASSET_LOG(GL_HANDLE_TYPE::SHADER);
-	//TODO_D("Load shader from a file.");
 	unsigned int vertex = LoadSubShader(GL_VERTEX_SHADER, vpath);
 	if (vertex == 0)
 	{
@@ -299,11 +259,6 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 
 bool nsfw::Assets::loadFBX(const char * name, const char * path)
 {
-	//name/meshName
-	//name/textureName
-	//TODO_D("FBX file-loading support needed.\nThis function should call loadTexture and makeVAO internally.\nFBX meshes each have their own name, 
-	//you may use this to name the meshes as they come in.\nMAKE SURE YOU SUPPORT THE DIFFERENCE BETWEEN FBXVERTEX AND YOUR VERTEX STRUCT!\n");
-
 	FBXFile file;
 	std::vector<Vertex> vertices;
 	std::vector<unsigned> indices;
@@ -335,11 +290,10 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 		makeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
-	//load textures
+	//load textures using fbx file, its already loaded so why not
 	for (int i = 0; i < file.getTextureCount(); i++)
 	{
 		FBXTexture* tex = file.getTextureByIndex(i);
-		//loadTexture(tex->name.c_str(), tex->path.c_str());
 		assert(nullptr != tex->data && "error loading texture.\n");
 		uint imageFormat = tex->format;
 		switch (imageFormat)
@@ -418,17 +372,10 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 
 void nsfw::Assets::init()
 {
-	//TODO_D("Load up some default assets here if you want.");
-
 	setINTERNAL(FBO, "Screen", 0);
 
 	makeVAO("Cube", CubeVerts, 24, CubeTris, 36);
 	makeVAO("Quad", QuadVerts, 4, QuadTris, 6);
-	/*
-	char w[] = { 255,255,255,255 };
-	makeTexture("White", 1, 1, GL_RGB8, w);
-	*/
-
 }
 
 void nsfw::Assets::term()
