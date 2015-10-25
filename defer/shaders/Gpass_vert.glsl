@@ -14,10 +14,21 @@ uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Model;
 
+//HACKHACK
+uniform bool isObj = false;
+
 void main() 
 {
 	vPosition = Model * View * Position;
-	vNormal = normalize(Model * View * Normal);
+	//HACKHACK
+	if (isObj)
+	{
+		vNormal = Normal;
+	}
+	else
+	{
+		vNormal = normalize(Model * View * Normal);
+	}
 	vTexCoord = TexCoord;
 	gl_Position = Model * Projection * View * Position;
 }

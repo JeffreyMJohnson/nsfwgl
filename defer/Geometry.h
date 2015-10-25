@@ -17,6 +17,8 @@ struct Geometry
 	nsfw::Asset<TEXTURE> normal;
 	nsfw::Asset<TEXTURE> specular;
 
+	bool isObjNormals = false;
+
 	float specPower;
 
 	void update() 
