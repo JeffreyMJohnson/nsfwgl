@@ -23,14 +23,14 @@ void main()
 	//HACKHACK
 	if (isObj)
 	{
-		vNormal = Normal;
-		vPosition = Position;
+		vNormal = Model * Normal;
+		vPosition = Model * Position;
 	}
 	else
 	{
-		vNormal = normalize(Model * View * Normal);
-		vPosition = Model * View * Position;
+		vNormal = normalize(View * Model * Normal);
+		vPosition = View * Model * Position;
 	}
 	vTexCoord = TexCoord;
-	gl_Position = Model * Projection * View * Position;
+	gl_Position = Projection * View * Model * Position;
 }

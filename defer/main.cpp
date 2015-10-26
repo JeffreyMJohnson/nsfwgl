@@ -54,7 +54,7 @@ void DeferredApplication::onInit()
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
-	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
+	a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
 
 
 }
@@ -104,11 +104,12 @@ void DeferredApplication::onStep()
 	m_camera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(nsfw::Window::instance().GetDeltaTime(), moveSpeed);
 	m_soulspear->update();
+	bunny->update();
 
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
-	m_geometryPass->draw(*m_camera, *m_soulspear2);
+	//m_geometryPass->draw(*m_camera, *m_soulspear2);
 	//m_geometryPass->draw(*m_camera, *bunny);
 	
 	m_geometryPass->post();
