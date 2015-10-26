@@ -44,7 +44,9 @@ public:
 			usingTexture = true;
 		}
 		//HACKHACK
-		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);		
+		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+		setUniform("isObj", nsfw::UNIFORM::BOOL, &g.isObjNormals);
+		
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);

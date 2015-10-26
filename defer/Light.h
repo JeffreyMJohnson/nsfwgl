@@ -12,7 +12,6 @@ struct LightD
 
 struct LightP
 {
-	/*intensity = 1/distance^2 (real world)*/
 	glm::vec3 color;
 	glm::vec3 position;
 	float attenuation;

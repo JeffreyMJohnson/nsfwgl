@@ -149,7 +149,6 @@
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LPassD.h" />
-    <ClInclude Include="LPassP.h" />
     <ClInclude Include="Mouse.h" />
   </ItemGroup>
   <ItemGroup>
