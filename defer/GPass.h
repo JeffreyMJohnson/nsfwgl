@@ -37,17 +37,14 @@ public:
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
 		//frag shader uniforms
-		if (g.diffuse.name == "")
-		{
-			int b = 0;
-			setUniform("isTexture", nsfw::UNIFORM::BOOL, &b);
-		}
-		else
+		bool usingTexture = false;
+		if (g.diffuse.name != "")
 		{
 			setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
+			usingTexture = true;
 		}
-
 		//HACKHACK
+		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
 		setUniform("isObj", nsfw::UNIFORM::BOOL, &g.isObjNormals);
 		
 

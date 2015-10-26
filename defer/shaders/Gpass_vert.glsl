@@ -19,15 +19,17 @@ uniform bool isObj = false;
 
 void main() 
 {
-	vPosition = Model * View * Position;
+	
 	//HACKHACK
 	if (isObj)
 	{
 		vNormal = Normal;
+		vPosition = Position;
 	}
 	else
 	{
 		vNormal = normalize(Model * View * Normal);
+		vPosition = Model * View * Position;
 	}
 	vTexCoord = TexCoord;
 	gl_Position = Model * Projection * View * Position;

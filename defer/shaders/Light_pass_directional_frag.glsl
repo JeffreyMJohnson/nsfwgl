@@ -7,9 +7,7 @@ out vec3 LightOutput;
 struct DirectionalLight
 {
 	vec3 color;
-	float ambientIntensity;
 	vec3 direction;
-	float diffuseIntensity;
 };
 
 //direction in view-space

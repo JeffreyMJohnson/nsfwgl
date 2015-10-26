@@ -6,7 +6,7 @@
 class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, specular, normal;
-	glm::vec3 ambientLight = vec3(.3, 0, .2);
+	glm::vec3 ambientLight = vec3(0);
 	float specPower = 40;
 public:
 	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
@@ -34,9 +34,7 @@ public:
 		//set frag shader uniforms
 		//set the light properties
 		setUniform("directional.direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
-		setUniform("directional.diffuseIntensity", nsfw::UNIFORM::TYPE::FLO1, &l.diffuseIntensity);
 		setUniform("directional.color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
-		setUniform("directional.ambientIntensity", nsfw::UNIFORM::TYPE::FLO1, &l.ambientIntensity);
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
