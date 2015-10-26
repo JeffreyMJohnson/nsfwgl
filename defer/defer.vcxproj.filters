@@ -65,6 +65,9 @@
     <ClInclude Include="Mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LPassP.h">
+      <Filter>Header Files\Passes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Gpass_frag.glsl">

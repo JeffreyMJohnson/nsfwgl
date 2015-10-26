@@ -1,9 +1,9 @@
 #version 410
 
-layout(location=0) in vec4 Position;
-layout(location=1) in vec4 Normal;
-layout(location=2) in vec4 Tangent;
-layout(location=3) in vec2 TexCoord;
+layout(location = 0) in vec4 Position;
+layout(location = 1) in vec4 Normal;
+layout(location = 2) in vec4 Tangent;
+layout(location = 3) in vec2 TexCoord;
 
 //view-space normal and position
 out vec4 vPosition;
@@ -14,23 +14,13 @@ uniform mat4 Projection;
 uniform mat4 View;
 uniform mat4 Model;
 
-//HACKHACK
-uniform bool isObj = false;
 
-void main() 
+void main()
 {
-	
-	//HACKHACK
-	if (isObj)
-	{
-		vNormal = Normal;
-		vPosition = Position;
-	}
-	else
-	{
-		vNormal = normalize(Model * View * Normal);
-		vPosition = Model * View * Position;
-	}
+
+	vNormal = normalize(View * Model * Normal);
+	//vNormal = normalize(Normal);
+	vPosition = View * Model * Position;
 	vTexCoord = TexCoord;
-	gl_Position = Model * Projection * View * Position;
+	gl_Position = Projection * View * Model * Position;
 }
