@@ -356,18 +356,26 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 				z = mesh.normals[normalIndex++];
 				vertex.normal = vec4(x, y, z, 1);
 			}
+			else
+			{
+				vertex.normal = vec4(0);
+			}
 			if (hasUVs)
 			{
 				x = mesh.texcoords[UVIndex++];
 				y = mesh.texcoords[UVIndex++];
 				vertex.texCoord = vec2(x, y);
 			}
+			else
+			{
+				vertex.texCoord = vec2(0);
+			}
+			vertex.tangent = vec4(0);
 			vertices.push_back(vertex);
 		}
 		indices = mesh.indices;
-		makeVAO(shape.name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
+		return makeVAO((shape.name.length() == 0) ? name : shape.name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
-
 }
 
 void nsfw::Assets::init()

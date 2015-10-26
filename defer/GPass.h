@@ -36,8 +36,17 @@ public:
 		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(g.transform));
 
-		//frad shader uniforms
-		setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
+		//frag shader uniforms
+		bool usingTexture = false;
+		if (g.diffuse.name != "")
+		{
+			setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
+			usingTexture = true;
+		}
+		//HACKHACK
+		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+		setUniform("isObj", nsfw::UNIFORM::BOOL, &g.isObjNormals);
+		
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);

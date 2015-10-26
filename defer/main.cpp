@@ -39,7 +39,7 @@ void DeferredApplication::onInit()
 
 	m_camera = new Camera;
 	m_camera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
-	m_camera->SetView(glm::vec3(0, 2, 5), glm::vec3(0, 2, 0), glm::vec3(0, 1, 0));
+	m_camera->SetView(glm::vec3(0, 2, 10), glm::vec3(0, 2, 0), glm::vec3(0, 1, 0));
 
 	Keyboard::Init();
 
@@ -54,6 +54,8 @@ void DeferredApplication::onInit()
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
+	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
+
 
 }
 
@@ -61,15 +63,33 @@ void DeferredApplication::onPlay()
 {
 	m_light = new LightD;
 	m_soulspear = new Geometry;
+	m_soulspear2 = new Geometry;
+	
+	bunny = new Geometry;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0,1,.25f));
+	m_light->direction = glm::normalize(glm::vec3(0, -1,0));//this is -position!
+	m_light->ambientIntensity = 1;
+	m_light->diffuseIntensity = 1;
 
 	m_soulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
+
+	m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
+	m_soulspear2->specPower = 40.0f;
+	m_soulspear2->transform = translate(-1, 0,0);
+
+	bunny->mesh = "Bunny";
+	bunny->tris = "Bunny";
+	bunny->specPower = 128.f;
+	bunny->transform = mat4(1);
+	bunny->isObjNormals = true;
+
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass = new LPassD("LightPassDirectional", "LightPass");
@@ -88,7 +108,14 @@ void DeferredApplication::onStep()
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
+	m_geometryPass->draw(*m_camera, *m_soulspear2);
+	//m_geometryPass->draw(*m_camera, *bunny);
+	
 	m_geometryPass->post();
+
+	//m_geometryPass->prep();
+	
+	//m_geometryPass->post();
 
 	m_directionalLightPass->prep();
 	m_directionalLightPass->draw(*m_camera, *m_light);
