@@ -6,7 +6,7 @@
 class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, specular, normal;
-	glm::vec3 ambientLight = vec3(0);
+	glm::vec3 ambientLight = vec3(0,0,.2f);
 	float specPower = 40;
 public:
 	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
