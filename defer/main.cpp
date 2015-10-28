@@ -62,10 +62,14 @@ void DeferredApplication::onInit()
 void DeferredApplication::onPlay()
 {
 	m_light = new LightD;
+	mPointLight = new LightP;
 	m_soulspear = new Geometry;
 	m_soulspear2 = new Geometry;
 	
 	bunny = new Geometry;
+
+	mPointLight->color = glm::vec3(0, 1, 0);
+	mPointLight->position
 
 	m_light->color = glm::vec3(1, 1, 1);
 	m_light->direction = glm::normalize(glm::vec3(0, -1,0));//this is -position!
@@ -78,16 +82,16 @@ void DeferredApplication::onPlay()
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
 
-	m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
-	m_soulspear2->specPower = 40.0f;
-	m_soulspear2->transform = translate(-1, 0,0);
+	//m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	//m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
+	//m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
+	//m_soulspear2->specPower = 40.0f;
+	//m_soulspear2->transform = translate(-1, 0,0);
 
-	bunny->mesh = "Bunny";
-	bunny->tris = "Bunny";
-	bunny->specPower = 128.f;
-	bunny->transform = glm::translate(-5,0,0);
+	//bunny->mesh = "Bunny";
+	//bunny->tris = "Bunny";
+	//bunny->specPower = 128.f;
+	//bunny->transform = glm::translate(-5,0,0);
 
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
@@ -102,14 +106,14 @@ void DeferredApplication::onStep()
 	m_light->update();
 	m_camera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(nsfw::Window::instance().GetDeltaTime(), moveSpeed);
-	//m_soulspear->update();
-	bunny->update();
+	m_soulspear->update();
+	//bunny->update();
 
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	//m_geometryPass->draw(*m_camera, *m_soulspear2);
-	m_geometryPass->draw(*m_camera, *bunny);
+	//m_geometryPass->draw(*m_camera, *bunny);
 	
 	m_geometryPass->post();
 

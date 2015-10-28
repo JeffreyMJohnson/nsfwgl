@@ -65,6 +65,9 @@
     <ClInclude Include="Mouse.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="LPassP.h">
+      <Filter>Header Files\Passes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Gpass_frag.glsl">
@@ -85,5 +88,13 @@
     <None Include="shaders\Light_pass_directional_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
+    <None Include="light_pass_point_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="light_pass_point_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </Text>
   </ItemGroup>
 </Project>

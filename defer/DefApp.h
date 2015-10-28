@@ -5,6 +5,7 @@
 class Camera;
 struct Geometry;
 struct LightD;
+struct LightP;
 
 class GPass;
 class LPassD;
@@ -17,6 +18,8 @@ class DeferredApplication : public nsfw::Application
 	Geometry *m_soulspear2;
 	Geometry *bunny;
 	LightD	 *m_light;
+	LightP *mPointLight;
+
 
 	CPass   *m_compositePass;
 	GPass   *m_geometryPass;

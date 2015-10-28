@@ -12,7 +12,17 @@ struct LightD
 
 struct LightP
 {
+	glm::vec4 position;
+	glm::vec3 normal;
+
 	glm::vec3 color;
-	glm::vec3 position;
-	float attenuation;
+	glm::vec3 direction;
+
+	struct Attenuation
+	{
+		float kC;//constant
+		float kL;//linear
+		float kQ;//quadratic
+	};
+	Attenuation attenuation;
 };
