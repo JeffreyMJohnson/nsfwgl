@@ -45,7 +45,6 @@ public:
 		}
 		//HACKHACK
 		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
-		setUniform("isObj", nsfw::UNIFORM::BOOL, &g.isObjNormals);
 		
 
 		glBindVertexArray(*g.mesh);

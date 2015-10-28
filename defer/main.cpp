@@ -87,8 +87,7 @@ void DeferredApplication::onPlay()
 	bunny->mesh = "Bunny";
 	bunny->tris = "Bunny";
 	bunny->specPower = 128.f;
-	bunny->transform = mat4(1);
-	bunny->isObjNormals = true;
+	bunny->transform = glm::translate(-5,0,0);
 
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
@@ -103,14 +102,14 @@ void DeferredApplication::onStep()
 	m_light->update();
 	m_camera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(nsfw::Window::instance().GetDeltaTime(), moveSpeed);
-	m_soulspear->update();
+	//m_soulspear->update();
 	bunny->update();
 
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	//m_geometryPass->draw(*m_camera, *m_soulspear2);
-	//m_geometryPass->draw(*m_camera, *bunny);
+	m_geometryPass->draw(*m_camera, *bunny);
 	
 	m_geometryPass->post();
 
