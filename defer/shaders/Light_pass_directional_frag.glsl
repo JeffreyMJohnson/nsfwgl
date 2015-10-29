@@ -28,14 +28,14 @@ void main()
 	vec3 position = texture(positionTexture, vTexCoord).xyz;
 
 	//compute diffuse lighting
-	vec3 L = directional.Direction;
-	float diffuseLight = max(dot(normal, L), 0);
+	vec3 lightDirection = directional.Direction;
+	float diffuseLight = max(dot(normal, lightDirection), 0);
 	vec3 diffuseResult = directional.Color * diffuseLight;
 
 	//compute specular lighting
-	vec3 V = normalize(CameraPosition - position);
-	vec3 H = normalize(L + V);
-	float specularLight = pow(max(dot(normal, H), 0), specPower);
+	vec3 viewPointDirection = normalize(CameraPosition - position);
+	vec3 halfVector = normalize(lightDirection + viewPointDirection);
+	float specularLight = pow(max(dot(normal, halfVector), 0), specPower);
 	if (diffuseLight <= 0)
 	{
 		specularLight = 0;

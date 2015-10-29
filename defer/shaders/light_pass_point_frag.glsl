@@ -22,12 +22,6 @@ vec3 GetLightDirection(vec3 lightPosition, vec3 vertexPosition)
 	return normalize(lightPosition - vertexPosition);
 }
 
-float AttenuationFactor(vec3 cameraPosition, Light light)
-{
-	float distance = distance(cameraPosition, light.Position);
-	return 1 / (light.attenuation.kC + light.attenuation.kL * distance + light.attenuation.kQ * distance * distance);
-}
-
 //direction in view-space
 uniform Light pointLight;
 
@@ -47,14 +41,14 @@ void main()
 	vec3 lightViewPosition = (View * vec4(pointLight.Position, 1)).xyz;
 
 	//compute diffuse lighting
-	vec3 L = normalize(lightViewPosition - position);
-	float diffuseLight = max(dot(normal, L), 0);
+	vec3 lightDirection = normalize(lightViewPosition - position);
+	float diffuseLight = max(dot(normal, lightDirection), 0);
 	vec3 diffuseResult = pointLight.Color * diffuseLight;
 
 	//compute specular lighting
-	vec3 V = normalize(CameraPosition - position);
-	vec3 H = normalize(L + V);
-	float specularLight = pow(max(dot(normal, H), 0), specPower);
+	vec3 viewPointDirection = normalize(CameraPosition - position);
+	vec3 halfVector = normalize(lightDirection + viewPointDirection);
+	float specularLight = pow(max(dot(normal, halfVector), 0), specPower);
 	if (diffuseLight <= 0)
 	{
 		specularLight = 0;
