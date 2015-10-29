@@ -22,4 +22,26 @@ struct LightP
 		float kQ = 1;//quadratic
 	};
 	Attenuation attenuation;
+
+	void Update(float deltaTime)
+	{
+		if (position.x > maxPosition)
+		{
+			position.x = maxPosition;
+			direction *= -1;
+		}
+		else if (position.x < minPosition)
+		{
+			position.x = minPosition;
+			direction *= -1;
+		}
+		position.x += moveSpeed * direction * deltaTime;
+		std::cerr << position.x << std::endl;
+	}
+
+private:
+	float maxPosition = 5;
+	float minPosition = -5;
+	float moveSpeed = 1;
+	int direction = 1;
 };

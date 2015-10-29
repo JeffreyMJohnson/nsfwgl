@@ -33,8 +33,8 @@ public:
 	{
 		//set frag shader uniforms
 		//set the light properties
-		setUniform("directional.direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
-		setUniform("directional.color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		setUniform("directional.Direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
+		setUniform("directional.Color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));

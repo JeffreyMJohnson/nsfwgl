@@ -9,12 +9,15 @@ class LPassP : public nsfw::RenderPass
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, specular, normal;
 	glm::vec3 ambientLight = vec3(0, 0, .2f);
 	float specPower = 40;
+	
+
 public:
 	LPassP(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
 	void prep()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
-		glClear(GL_COLOR_BUFFER_BIT);
+		//dont clear the fucking buffer!! need to blend it with previous!
+		//glClear(GL_COLOR_BUFFER_BIT);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);
@@ -29,6 +32,8 @@ public:
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+
+
 	void draw(Camera &c, const LightP &l)
 	{
 		//set frag shader uniforms
@@ -42,7 +47,7 @@ public:
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
-
+		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
 		setUniform("ambient", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
 		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);

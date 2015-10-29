@@ -6,8 +6,8 @@ out vec3 LightOutput;
 
 struct DirectionalLight
 {
-	vec3 color;
-	vec3 direction;
+	vec3 Color;
+	vec3 Direction;
 };
 
 //direction in view-space
@@ -23,15 +23,26 @@ uniform sampler2D normalTexture;
 
 void main()
 {
+
 	vec3 normal = normalize(texture(normalTexture, vTexCoord).xyz);
 	vec3 position = texture(positionTexture, vTexCoord).xyz;
 
-	float diffuse = max(0, dot(normal, -directional.direction));
-	vec3 eye = normalize(position.xyz - CameraPosition);
-	vec3 reflect = reflect(-directional.direction, normal.xyz);
-	float specular = max(0, dot(eye, reflect));
-	specular = pow(specular, specPower);
+	//compute diffuse lighting
+	vec3 L = directional.Direction;
+	float diffuseLight = max(dot(normal, L), 0);
+	vec3 diffuseResult = directional.Color * diffuseLight;
 
-	LightOutput = ambient + (directional.color * diffuse) + (directional.color * specular);
+	//compute specular lighting
+	vec3 V = normalize(CameraPosition - position);
+	vec3 H = normalize(L + V);
+	float specularLight = pow(max(dot(normal, H), 0), specPower);
+	if (diffuseLight <= 0)
+	{
+		specularLight = 0;
+	}
+	vec3 specularResult = directional.Color * specularLight;
+
+
+	LightOutput = ambient + (diffuseLight + specularLight);
 
 }

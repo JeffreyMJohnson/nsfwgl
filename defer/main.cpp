@@ -70,11 +70,11 @@ void DeferredApplication::onPlay()
 	bunny = new Geometry;
 
 	mPointLight->color = glm::vec3(1, 1, 0);
-	mPointLight->position = glm::vec4(10,0,0, 1);
-	mPointLight->attenuation.kC = 1.0f;
+	mPointLight->position = glm::vec4(0,2,2, 1);
+	mPointLight->attenuation.kC = 0;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, -1, 0));//this is -position!
+	m_light->direction = glm::normalize(glm::vec3(0, -1, .25f));//this is -position!
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
@@ -105,10 +105,12 @@ void DeferredApplication::onPlay()
 void DeferredApplication::onStep()
 {
 	float moveSpeed = 10;
+	float deltaTime = nsfw::Window::instance().GetDeltaTime();
 
 	m_light->update();
+	mPointLight->Update(deltaTime);
 	m_camera->Update(nsfw::Window::instance().getTime());
-	UpdateFlyCamControls(nsfw::Window::instance().GetDeltaTime(), moveSpeed);
+	UpdateFlyCamControls(deltaTime, moveSpeed);
 	m_soulspear->update();
 	//bunny->update();
 
