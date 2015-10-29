@@ -88,12 +88,12 @@
     <None Include="shaders\Light_pass_directional_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="light_pass_point_frag.glsl">
+    <None Include="shaders\light_pass_point_frag.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
   <ItemGroup>
-    <Text Include="light_pass_point_vert.glsl">
+    <Text Include="shaders\light_pass_point_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </Text>
   </ItemGroup>

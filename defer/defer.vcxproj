@@ -153,7 +153,7 @@
     <ClInclude Include="Mouse.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="light_pass_point_frag.glsl" />
+    <None Include="shaders\light_pass_point_frag.glsl" />
     <None Include="shaders\Cpass_frag.glsl" />
     <None Include="shaders\Cpass_vert.glsl" />
     <None Include="shaders\Gpass_frag.glsl" />
@@ -162,7 +162,7 @@
     <None Include="shaders\Light_pass_directional_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
-    <Text Include="light_pass_point_vert.glsl" />
+    <Text Include="shaders\light_pass_point_vert.glsl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

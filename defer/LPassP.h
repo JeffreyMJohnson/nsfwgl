@@ -9,7 +9,8 @@ class LPassP : public nsfw::RenderPass
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, specular, normal;
 	glm::vec3 ambientLight = vec3(0, 0, .2f);
 	float specPower = 40;
-
+public:
+	LPassP(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
 	void prep()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
@@ -32,12 +33,12 @@ class LPassP : public nsfw::RenderPass
 	{
 		//set frag shader uniforms
 		//set the light properties
-		setUniform("directional.direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
-		setUniform("directional.color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
-		setUniform("directional.position", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.position));
-		setUniform("attenuation.kC", nsfw::UNIFORM::TYPE::FLO1, &l.attenuation.kC);
-		setUniform("attenuation.kL", nsfw::UNIFORM::TYPE::FLO1, &l.attenuation.kL);
-		setUniform("attenuation.kQ", nsfw::UNIFORM::TYPE::FLO1, &l.attenuation.kQ);
+		setUniform("pointLight.Position", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.position));
+		setUniform("pointLight.Color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		
+		setUniform("pointLight.attenuation.kC", nsfw::UNIFORM::TYPE::FLO1, &l.attenuation.kC);
+		setUniform("pointLight.attenuation.kL", nsfw::UNIFORM::TYPE::FLO1, &l.attenuation.kL);
+		setUniform("pointLight.attenuation.kQ", nsfw::UNIFORM::TYPE::FLO1, &l.attenuation.kQ);
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));

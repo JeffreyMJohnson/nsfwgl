@@ -10,6 +10,7 @@ struct LightP;
 class GPass;
 class LPassD;
 class CPass;
+class LPassP;
 
 class DeferredApplication : public nsfw::Application
 {
@@ -24,6 +25,7 @@ class DeferredApplication : public nsfw::Application
 	CPass   *m_compositePass;
 	GPass   *m_geometryPass;
 	LPassD  *m_directionalLightPass;
+	LPassP  *mPointLightPass;
 
 	Geometry* mTestCube;
 

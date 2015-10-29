@@ -9,6 +9,7 @@
 #include "GPass.h"
 #include "CPass.h"
 #include "LPassD.h"
+#include "LPassP.h"
 
 
 
@@ -34,7 +35,7 @@ void DeferredApplication::onInit()
 	// Load Shaders
 	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
 	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
-	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
+	a.loadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
 	m_camera = new Camera;
@@ -54,7 +55,7 @@ void DeferredApplication::onInit()
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
-	a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
+	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
 
 
 }
@@ -65,14 +66,15 @@ void DeferredApplication::onPlay()
 	mPointLight = new LightP;
 	m_soulspear = new Geometry;
 	m_soulspear2 = new Geometry;
-	
+
 	bunny = new Geometry;
 
-	mPointLight->color = glm::vec3(0, 1, 0);
-	mPointLight->position
+	mPointLight->color = glm::vec3(1, 1, 0);
+	mPointLight->position = glm::vec4(10,0,0, 1);
+	mPointLight->attenuation.kC = 1.0f;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, -1,0));//this is -position!
+	m_light->direction = glm::normalize(glm::vec3(0, -1, 0));//this is -position!
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
@@ -96,6 +98,7 @@ void DeferredApplication::onPlay()
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass = new LPassD("LightPassDirectional", "LightPass");
+	mPointLightPass = new LPassP("LightPassPoint", "LightPass");
 	m_compositePass = new CPass("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 }
 
@@ -111,19 +114,21 @@ void DeferredApplication::onStep()
 
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
+
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	//m_geometryPass->draw(*m_camera, *m_soulspear2);
 	//m_geometryPass->draw(*m_camera, *bunny);
-	
+
 	m_geometryPass->post();
 
-	//m_geometryPass->prep();
-	
-	//m_geometryPass->post();
 
 	m_directionalLightPass->prep();
 	m_directionalLightPass->draw(*m_camera, *m_light);
 	m_directionalLightPass->post();
+
+	mPointLightPass->prep();
+	mPointLightPass->draw(*m_camera, *mPointLight);
+	mPointLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();
@@ -134,6 +139,7 @@ void DeferredApplication::onTerm()
 {
 	delete m_camera;
 	delete m_light;
+	delete mPointLight;
 	delete m_soulspear;
 
 	delete m_compositePass;
