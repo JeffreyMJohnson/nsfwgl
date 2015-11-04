@@ -58,6 +58,7 @@ void DeferredApplication::onInit()
 	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
 
 
+
 }
 
 void DeferredApplication::onPlay()
@@ -66,8 +67,8 @@ void DeferredApplication::onPlay()
 	mPointLight = new LightP;
 	m_soulspear = new Geometry;
 	m_soulspear2 = new Geometry;
-
 	bunny = new Geometry;
+	floor = new Geometry;
 
 	mPointLight->color = glm::vec3(1, 1, 0);
 	mPointLight->position = glm::vec4(0,2,2, 1);
@@ -83,6 +84,11 @@ void DeferredApplication::onPlay()
 	m_soulspear->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
+
+	floor->mesh = "Quad";
+	floor->tris = "Quad";
+	floor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10,10,1));
+	
 
 	//m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	//m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
@@ -118,6 +124,7 @@ void DeferredApplication::onStep()
 	m_geometryPass->prep();
 
 	m_geometryPass->draw(*m_camera, *m_soulspear);
+	m_geometryPass->draw(*m_camera, *floor);
 	//m_geometryPass->draw(*m_camera, *m_soulspear2);
 	//m_geometryPass->draw(*m_camera, *bunny);
 
@@ -143,6 +150,7 @@ void DeferredApplication::onTerm()
 	delete m_light;
 	delete mPointLight;
 	delete m_soulspear;
+	delete floor;
 
 	delete m_compositePass;
 	delete m_geometryPass;

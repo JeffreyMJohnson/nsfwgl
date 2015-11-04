@@ -18,6 +18,7 @@ class DeferredApplication : public nsfw::Application
 	Geometry *m_soulspear;
 	Geometry *m_soulspear2;
 	Geometry *bunny;
+	Geometry *floor;
 	LightD	 *m_light;
 	LightP *mPointLight;
 
