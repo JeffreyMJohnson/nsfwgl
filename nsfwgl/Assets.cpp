@@ -354,7 +354,7 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 				x = mesh.normals[normalIndex++];
 				y = mesh.normals[normalIndex++];
 				z = mesh.normals[normalIndex++];
-				vertex.normal = vec4(x, y, z, 1);
+				vertex.normal = vec4(x, y, z, 0);
 			}
 			else
 			{

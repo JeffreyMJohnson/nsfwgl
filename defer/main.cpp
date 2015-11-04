@@ -9,6 +9,7 @@
 #include "GPass.h"
 #include "CPass.h"
 #include "LPassD.h"
+#include "LPassP.h"
 
 
 
@@ -34,7 +35,7 @@ void DeferredApplication::onInit()
 	// Load Shaders
 	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
 	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
-	//a.loadShader("LightPassPoint", "/path/to/lpass/Point/vertex", "/path/to/lpass/Point/fragment");
+	a.loadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
 	m_camera = new Camera;
@@ -54,7 +55,7 @@ void DeferredApplication::onInit()
 
 	// Load any other textures and geometry we want to use
 	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
-	a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
+	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
 
 
 }
@@ -62,13 +63,18 @@ void DeferredApplication::onInit()
 void DeferredApplication::onPlay()
 {
 	m_light = new LightD;
+	mPointLight = new LightP;
 	m_soulspear = new Geometry;
 	m_soulspear2 = new Geometry;
-	
+
 	bunny = new Geometry;
 
+	mPointLight->color = glm::vec3(1, 1, 0);
+	mPointLight->position = glm::vec4(0,2,2, 1);
+	mPointLight->attenuation.kC = 0;
+
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, -1,0));//this is -position!
+	m_light->direction = glm::normalize(glm::vec3(0, -1, .25f));//this is -position!
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
@@ -78,49 +84,53 @@ void DeferredApplication::onPlay()
 	m_soulspear->specPower = 40.0f;
 	m_soulspear->transform = mat4(1);
 
-	m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
-	m_soulspear2->specPower = 40.0f;
-	m_soulspear2->transform = translate(-1, 0,0);
+	//m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	//m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
+	//m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
+	//m_soulspear2->specPower = 40.0f;
+	//m_soulspear2->transform = translate(-1, 0,0);
 
-	bunny->mesh = "Bunny";
-	bunny->tris = "Bunny";
-	bunny->specPower = 128.f;
-	bunny->transform = mat4(1);
-	bunny->isObjNormals = true;
+	//bunny->mesh = "Bunny";
+	//bunny->tris = "Bunny";
+	//bunny->specPower = 128.f;
+	//bunny->transform = glm::translate(-5,0,0);
 
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass = new LPassD("LightPassDirectional", "LightPass");
+	mPointLightPass = new LPassP("LightPassPoint", "LightPass");
 	m_compositePass = new CPass("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 }
 
 void DeferredApplication::onStep()
 {
 	float moveSpeed = 10;
+	float deltaTime = nsfw::Window::instance().GetDeltaTime();
 
 	m_light->update();
+	mPointLight->Update(deltaTime);
 	m_camera->Update(nsfw::Window::instance().getTime());
-	UpdateFlyCamControls(nsfw::Window::instance().GetDeltaTime(), moveSpeed);
+	UpdateFlyCamControls(deltaTime, moveSpeed);
 	m_soulspear->update();
-	bunny->update();
+	//bunny->update();
 
 	//TODO_D("Draw all of our renderpasses!");
 	m_geometryPass->prep();
+
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	//m_geometryPass->draw(*m_camera, *m_soulspear2);
 	//m_geometryPass->draw(*m_camera, *bunny);
-	
+
 	m_geometryPass->post();
 
-	//m_geometryPass->prep();
-	
-	//m_geometryPass->post();
 
 	m_directionalLightPass->prep();
 	m_directionalLightPass->draw(*m_camera, *m_light);
 	m_directionalLightPass->post();
+
+	mPointLightPass->prep();
+	mPointLightPass->draw(*m_camera, *mPointLight);
+	mPointLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();
@@ -131,6 +141,7 @@ void DeferredApplication::onTerm()
 {
 	delete m_camera;
 	delete m_light;
+	delete mPointLight;
 	delete m_soulspear;
 
 	delete m_compositePass;
