@@ -7,6 +7,8 @@ layout(location = 3) in vec2 TexCoord;
 
 out vec2 vTexCoord;
 
+
+
 void main() 
 {
 	vTexCoord = TexCoord;

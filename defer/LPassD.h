@@ -5,11 +5,14 @@
 
 class LPassD : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal;
-	glm::vec3 ambientLight = vec3(0,0,.2f);
+	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal, shadowMap;
+	glm::vec3 ambientLight = vec3(0);// vec3(0, 0, .2f);
 	float specPower = 40;
+
+	glm::mat4 lightMatrix;
+
 public:
-	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal") {}
+	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), shadowMap("ShadowMap") {}
 
 	void prep()
 	{
@@ -31,6 +34,18 @@ public:
 
 	void draw(Camera &c, const LightD &l)
 	{
+		glm::mat4 lightProjection = glm::ortho<float>(-10, 10, -10, 10, -10, 10);
+		glm::mat4 lightView = glm::lookAt(l.direction, glm::vec3(0), glm::vec3(0, 1, 0));
+		lightMatrix = lightProjection * lightView;
+		glm::mat4 textureSpaceOffset(
+			0.5f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.5f, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.5f, 0.0f,
+			0.5f, 0.5f, 0.5f, 1.0f
+			);
+		glm::mat4 lightMatrix = textureSpaceOffset * lightMatrix;
+
+
 		//set frag shader uniforms
 		//set the light properties
 		setUniform("directional.Direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
@@ -42,8 +57,13 @@ public:
 		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
 		setUniform("ambient", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
 		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
+		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
+		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 
 		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
+		setUniform("LightMatrix", nsfw::UNIFORM::MAT4, glm::value_ptr(lightMatrix));
+		setUniform("ShadowMap", nsfw::UNIFORM::TEX2, shadowMap, 2);
+
 
 		unsigned quadVAOHandle = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
 		unsigned quadNumtris = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");

@@ -1,6 +1,7 @@
 #version 410
 
-in vec4 vPosition;
+//in vec4 vPosition;//MVP coords
+in vec4 vPosition;//world space
 in vec4 vNormal;
 in vec2 vTexCoord;
 
@@ -20,9 +21,9 @@ void main()
 	}
 	else
 	{
-		gpassAlbedo = vec3(1);
+		gpassAlbedo = vec3(.25f,.25f,.25f);
 	}
 	
-	gpassPosition = vPosition.xyz;
+	gpassPosition = vPosition.xyz;//MVP coords
 	gpassNormal = vNormal.xyz;
 }

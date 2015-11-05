@@ -11,6 +11,7 @@ class GPass;
 class LPassD;
 class CPass;
 class LPassP;
+class ShadowPass;
 
 class DeferredApplication : public nsfw::Application
 {
@@ -18,12 +19,14 @@ class DeferredApplication : public nsfw::Application
 	Geometry *m_soulspear;
 	Geometry *m_soulspear2;
 	Geometry *bunny;
+	Geometry *floor;
 	LightD	 *m_light;
 	LightP *mPointLight;
 
 
 	CPass   *m_compositePass;
 	GPass   *m_geometryPass;
+	ShadowPass *mShadowPass;
 	LPassD  *m_directionalLightPass;
 	LPassP  *mPointLightPass;
 

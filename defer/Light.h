@@ -36,7 +36,7 @@ struct LightP
 			direction *= -1;
 		}
 		position.x += moveSpeed * direction * deltaTime;
-		std::cerr << position.x << std::endl;
+		//std::cerr << position.x << std::endl;
 	}
 
 private:
