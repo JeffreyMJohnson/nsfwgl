@@ -6,7 +6,7 @@
 
 class LPassP : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> position, specular, normal;
+	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal;
 	glm::vec3 ambientLight = vec3(0, 0, .2f);
 	float specPower = 40;
 	
@@ -47,11 +47,10 @@ public:
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
+		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
 		setUniform("ambient", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
 		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
-		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
-		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 
 		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
 

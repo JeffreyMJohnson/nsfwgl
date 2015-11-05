@@ -11,7 +11,7 @@ public:
 	void prep()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
-		//glEnable(GL_DEPTH_TEST);
+		glEnable(GL_DEPTH_TEST);
 		//glViewport(0, 0, 1024, 1024);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glUseProgram(*shader);
@@ -21,7 +21,7 @@ public:
 
 	void post()
 	{
-		//glDisable(GL_DEPTH_TEST);
+		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
 	}

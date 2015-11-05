@@ -26,19 +26,17 @@ vec3 GetLightDirection(vec3 lightPosition, vec3 vertexPosition)
 uniform Light pointLight;
 
 uniform vec3 CameraPosition;
+uniform mat4 View;
 uniform float specPower;
 
 uniform vec3 ambient;
-uniform mat4 Projection;//camera 
-uniform mat4 View;//camera
-uniform sampler2D positionTexture;//world space
+uniform sampler2D positionTexture;//view space
 uniform sampler2D normalTexture;
 
 void main()
 {
 	vec3 normal = normalize(texture(normalTexture, vTexCoord).xyz);
-	vec3 position = texture(positionTexture, vTexCoord).xyz;//world space
-	position = (Projection * View * vec4(position, 1)).xyz;//MVP space
+	vec3 position = texture(positionTexture, vTexCoord).xyz;//view space
 	vec3 lightViewPosition = (View * vec4(pointLight.Position, 1)).xyz;
 
 	//compute diffuse lighting
@@ -59,5 +57,6 @@ void main()
 	//calc attenuation
 	float distance = distance(position, lightViewPosition);
 	float attFactor = 1.0f / (distance * distance);
+	//think this is wrong, should be specularResult?
 	LightOutput = ambient + attFactor * (diffuseLight + specularLight);
 }
