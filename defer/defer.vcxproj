@@ -151,6 +151,7 @@
     <ClInclude Include="LPassD.h" />
     <ClInclude Include="LPassP.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="ShadowPass.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\light_pass_point_frag.glsl" />
@@ -160,6 +161,8 @@
     <None Include="shaders\Gpass_vert.glsl" />
     <None Include="shaders\Light_pass_directional_frag.glsl" />
     <None Include="shaders\Light_pass_directional_vert.glsl" />
+    <None Include="shaders\ShadowPass_frag.glsl" />
+    <None Include="shaders\ShadowPass_vert.glsl" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="shaders\light_pass_point_vert.glsl" />

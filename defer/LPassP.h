@@ -47,10 +47,11 @@ public:
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
-		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
 		setUniform("ambient", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
 		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
+		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
+		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
 
 		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
 

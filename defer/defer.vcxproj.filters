@@ -68,6 +68,9 @@
     <ClInclude Include="LPassP.h">
       <Filter>Header Files\Passes</Filter>
     </ClInclude>
+    <ClInclude Include="ShadowPass.h">
+      <Filter>Header Files\Passes</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Gpass_frag.glsl">
@@ -89,6 +92,12 @@
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shaders\light_pass_point_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\ShadowPass_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\ShadowPass_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>
