@@ -81,7 +81,7 @@ void DeferredApplication::onPlay()
 	mPointLight->attenuation.kC = 0;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0, -1, .25f));
+	m_light->direction = glm::normalize(glm::vec3(1,1,0));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 
@@ -95,15 +95,15 @@ void DeferredApplication::onPlay()
 	floor->tris = "Quad";
 	floor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
 
-	//m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
-	//m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
-	//m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
-	//m_soulspear2->specPower = 40.0f;
-	//m_soulspear2->transform = translate(-1, 0,0);
+	m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
+	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
+	m_soulspear2->specPower = 128.0f;
+	m_soulspear2->transform = translate(-1, 0,0);
 
-	//bunny->mesh = "Bunny";
-	//bunny->tris = "Bunny";
-	//bunny->specPower = 128.f;
+	bunny->mesh = "Bunny";
+	bunny->tris = "Bunny";
+	bunny->specPower = 128.f;
 
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
@@ -130,7 +130,7 @@ void DeferredApplication::onStep()
 
 	m_geometryPass->draw(*m_camera, *m_soulspear);
 	m_geometryPass->draw(*m_camera, *floor);
-	//m_geometryPass->draw(*m_camera, *m_soulspear2);
+	m_geometryPass->draw(*m_camera, *m_soulspear2);
 	//m_geometryPass->draw(*m_camera, *bunny);
 
 	m_geometryPass->post();
