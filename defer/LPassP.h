@@ -8,7 +8,7 @@ class LPassP : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal;
 	glm::vec3 ambientLight = vec3(0, 0, .2f);
-	float specPower = 40;
+	float specPower = 128;
 	
 
 public:
