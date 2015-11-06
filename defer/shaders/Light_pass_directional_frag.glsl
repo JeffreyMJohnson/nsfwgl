@@ -27,6 +27,7 @@ uniform sampler2D normalTexture;
 //shadows
 uniform mat4 TextureSpaceOffset;
 uniform sampler2D ShadowMap;
+uniform float shadowBias = .01;
 
 
 void main()
@@ -42,7 +43,7 @@ void main()
 	vec3 lightDirection = directional.Direction;
 	float d = max(dot(normal, lightDirection), 0); //lambertian term
 	//shadow
-	if (texture(ShadowMap, shadowCoord.xy).r < shadowCoord.z)
+	if (texture(ShadowMap, shadowCoord.xy).r < shadowCoord.z - shadowBias)
 	{
 		d = 0;
 	}
