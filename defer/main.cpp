@@ -35,7 +35,7 @@ void DeferredApplication::onInit()
 
 	// Load Shaders
 	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
-	//a.loadShader("ShadowPass", "./shaders/ShadowPass_vert.glsl", "./shaders/ShadowPass_frag.glsl");
+	a.loadShader("ShadowPass", "./shaders/ShadowPass_vert.glsl", "./shaders/ShadowPass_frag.glsl");
 	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	a.loadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
@@ -51,9 +51,9 @@ void DeferredApplication::onInit()
 	const unsigned gpassDepths[] = { GL_RGB8,GL_RGB32F,GL_RGB32F,GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
 	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
-	//const char *shadowPassTextureNames[] = { "ShadowPassDepth" };
-	//const unsigned shadowPassDepths[] = { GL_DEPTH_COMPONENT };
-	//a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, shadowPassTextureNames, shadowPassDepths);
+	const char *shadowPassTextureNames[] = { "ShadowPassDepth" };
+	const unsigned shadowPassDepths[] = { GL_DEPTH_COMPONENT };
+	a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, shadowPassTextureNames, shadowPassDepths);
 
 	const char *lpassTextureNames[] = { "LPassColor" };
 	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
@@ -81,9 +81,11 @@ void DeferredApplication::onPlay()
 	mPointLight->attenuation.kC = 0;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(1,1,0));
+	m_light->direction = glm::normalize(glm::vec3(0,1,.50f));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
+	m_light->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
+	m_light->view = glm::lookAt(m_light->direction, glm::vec3(0), glm::vec3(0, 1, 0));
 
 	m_soulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear->tris = "SoulSpear_Low:SoulSpear_Low1";
@@ -99,7 +101,7 @@ void DeferredApplication::onPlay()
 	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
 	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
 	m_soulspear2->specPower = 128.0f;
-	m_soulspear2->transform = translate(-1, 0,0);
+	m_soulspear2->transform = translate(-5, 0,0);
 
 	bunny->mesh = "Bunny";
 	bunny->tris = "Bunny";
@@ -108,7 +110,7 @@ void DeferredApplication::onPlay()
 
 	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
 	m_directionalLightPass = new LPassD("LightPassDirectional", "LightPass");
-	//mShadowPass = new ShadowPass("ShadowPass", "ShadowPass");
+	mShadowPass = new ShadowPass("ShadowPass", "ShadowPass");
 	mPointLightPass = new LPassP("LightPassPoint", "LightPass");
 	m_compositePass = new CPass("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 }
@@ -129,16 +131,17 @@ void DeferredApplication::onStep()
 	m_geometryPass->prep();
 
 	m_geometryPass->draw(*m_camera, *m_soulspear);
-	m_geometryPass->draw(*m_camera, *floor);
 	m_geometryPass->draw(*m_camera, *m_soulspear2);
+	m_geometryPass->draw(*m_camera, *floor);
 	//m_geometryPass->draw(*m_camera, *bunny);
 
 	m_geometryPass->post();
 
-	//mShadowPass->prep();
-	//mShadowPass->draw(*m_light, *m_soulspear);
-	////mShadowPass->draw(*m_light, *floor);
-	//mShadowPass->post();
+	mShadowPass->prep();
+	mShadowPass->draw(*m_light, *m_soulspear);
+	mShadowPass->draw(*m_light, *m_soulspear2);
+	mShadowPass->draw(*m_light, *floor);
+	mShadowPass->post();
 
 	m_directionalLightPass->prep();
 	m_directionalLightPass->draw(*m_camera, *m_light);
@@ -163,6 +166,7 @@ void DeferredApplication::onTerm()
 
 	delete m_compositePass;
 	delete m_geometryPass;
+	delete mShadowPass;
 	delete m_directionalLightPass;
 }
 
