@@ -55,5 +55,6 @@ void main()
 	float s = pow(max(dot(E, R), 0), specPower);//specular
 
 	LightOutput = ambient + (directional.Color * d) + (directional.Color * s);
+	//LightOutput = texture(ShadowMap, shadowCoord.xy).xyz;
 
 }
