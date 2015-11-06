@@ -7,6 +7,8 @@ struct LightD
 	float ambientIntensity = 1;
 	glm::vec3 direction = vec3(0, 1, 0);
 	float diffuseIntensity = 1;
+	glm::mat4 projection;
+	glm::mat4 view;
 	void update() {}
 };
 
