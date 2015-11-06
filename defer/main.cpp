@@ -81,7 +81,7 @@ void DeferredApplication::onPlay()
 	mPointLight->attenuation.kC = 0;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(1,1,1));
+	m_light->direction = glm::normalize(glm::vec3(0,.5f,1));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 	m_light->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);

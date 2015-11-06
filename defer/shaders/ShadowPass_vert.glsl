@@ -10,5 +10,5 @@ uniform mat4 Model;
 
 void main()
 {
-	gl_Position = LightMatrix * Position * Model;
+	gl_Position = LightMatrix * Model * Position;
 }
