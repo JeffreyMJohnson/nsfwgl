@@ -18,7 +18,6 @@ void main()
 {
 
 	vNormal = normalize(View * Model * Normal);
-	//View space coords
 	vPosition = View * Model * Position;
 	vTexCoord = TexCoord;
 	gl_Position = Projection * View * Model * Position;

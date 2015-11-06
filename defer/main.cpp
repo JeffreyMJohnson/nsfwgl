@@ -51,7 +51,7 @@ void DeferredApplication::onInit()
 	const unsigned gpassDepths[] = { GL_RGB8,GL_RGB32F,GL_RGB32F,GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
 	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
-	const char *shadowPassTextureNames[] = { "ShadowPassDepth" };
+	const char *shadowPassTextureNames[] = { "ShadowMap" };
 	const unsigned shadowPassDepths[] = { GL_DEPTH_COMPONENT };
 	a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, shadowPassTextureNames, shadowPassDepths);
 
@@ -81,7 +81,7 @@ void DeferredApplication::onPlay()
 	mPointLight->attenuation.kC = 0;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0,1,.50f));
+	m_light->direction = glm::normalize(glm::vec3(1,1,1));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 	m_light->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);

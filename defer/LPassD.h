@@ -5,14 +5,14 @@
 
 class LPassD : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal, shadowMap;
-	glm::vec3 ambientLight = vec3(0, 0, .2f);
+	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal, ShadowMap;
+	glm::vec3 ambientLight = vec3(.25f,.25f,.25f);
 	float specPower = 128;
 
 	//glm::mat4 lightMatrix;
 
 public:
-	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), shadowMap("ShadowMap") {}
+	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), ShadowMap("ShadowMap") {}
 
 	void prep()
 	{
@@ -57,7 +57,7 @@ public:
 		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
 
 		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
-		setUniform("ShadowMap", nsfw::UNIFORM::TEX2, shadowMap, 2);
+		setUniform("ShadowMap", nsfw::UNIFORM::TEX2, ShadowMap, 2);
 
 
 		unsigned quadVAOHandle = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");

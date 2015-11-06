@@ -26,7 +26,7 @@ uniform sampler2D normalTexture;
 
 //shadows
 uniform mat4 TextureSpaceOffset;
-uniform sampler2D shadowMap;
+uniform sampler2D ShadowMap;
 
 
 void main()
@@ -36,24 +36,23 @@ void main()
 
 	//shadows
 	mat4 lightViewProjection = TextureSpaceOffset * directional.projection * directional.view;
-	vec4 shadowCoord = lightViewProjection * vec4(position,1) * inverse(CameraView);
+	vec4 shadowCoord = lightViewProjection * inverse(CameraView) * vec4(position, 1);
 
 	//compute diffuse lighting
 	vec3 lightDirection = directional.Direction;
-	float d = max(dot(normal, -lightDirection), 0); //lambertian term
+	float d = max(dot(normal, lightDirection), 0); //lambertian term
 	//shadow
-	if (texture(shadowMap, shadowCoord.xy).r < shadowCoord.z)
+	if (texture(ShadowMap, shadowCoord.xy).r < shadowCoord.z)
 	{
 		d = 0;
 	}
-	d = texture(shadowMap, shadowCoord.xy).r;
-	LightOutput = vec3 (1) + vec3(d);
-	//compute specular lighting
-	//vec3 CamViewPosition = (CameraView * vec4(CameraPosition, 1)).xyz;
-	//vec3 E = normalize(CamViewPosition - position); //Eye vector
-	//vec3 R = reflect(-lightDirection, normal);//reflection vector
-	//float s = pow(max(dot(E, R), 0), specPower);//specular
 
-	//LightOutput = directional.Color * d + directional.Color * s;
+	//compute specular lighting
+	vec3 CamViewPosition = (CameraView * vec4(CameraPosition, 1)).xyz;
+	vec3 E = normalize(CamViewPosition - position); //Eye vector
+	vec3 R = reflect(-lightDirection, normal);//reflection vector
+	float s = pow(max(dot(E, R), 0), specPower);//specular
+
+	LightOutput = ambient + (directional.Color * d) + (directional.Color * s);
 
 }
