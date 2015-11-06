@@ -81,7 +81,7 @@ void DeferredApplication::onPlay()
 	mPointLight->attenuation.kC = 0;
 
 	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(1,1,1));
+	m_light->direction = glm::normalize(glm::vec3(0,.5f,1));
 	m_light->ambientIntensity = 1;
 	m_light->diffuseIntensity = 1;
 	m_light->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
@@ -120,7 +120,7 @@ void DeferredApplication::onStep()
 	float moveSpeed = 10;
 	float deltaTime = nsfw::Window::instance().GetDeltaTime();
 
-	m_light->update();
+	m_light->update(deltaTime);
 	mPointLight->Update(deltaTime);
 	m_camera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(deltaTime, moveSpeed);
@@ -147,9 +147,9 @@ void DeferredApplication::onStep()
 	m_directionalLightPass->draw(*m_camera, *m_light);
 	m_directionalLightPass->post();
 
-	mPointLightPass->prep();
-	mPointLightPass->draw(*m_camera, *mPointLight);
-	mPointLightPass->post();
+	//mPointLightPass->prep();
+	//mPointLightPass->draw(*m_camera, *mPointLight);
+	//mPointLightPass->post();
 
 	m_compositePass->prep();
 	m_compositePass->draw();
