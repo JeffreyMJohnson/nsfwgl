@@ -15,20 +15,20 @@ class ShadowPass;
 
 class DeferredApplication : public nsfw::Application
 {
-	Camera   *m_camera;
-	Geometry *m_soulspear;
-	Geometry *m_soulspear2;
-	Geometry *bunny;
-	Geometry *floor;
-	LightD	 *m_light;
-	LightP *mPointLight;
+	Camera* mCamera;
+	Geometry* mSoulspear;
+	Geometry* mSoulspear2;
+	Geometry* mBunny;
+	Geometry* mFloor;
+	LightD* mLight;
+	LightP* mPointLight;
 
 
-	CPass   *m_compositePass;
-	GPass   *m_geometryPass;
-	ShadowPass *mShadowPass;
-	LPassD  *m_directionalLightPass;
-	LPassP  *mPointLightPass;
+	CPass* mCompositePass;
+	GPass* mGeometryPass;
+	ShadowPass* mShadowPass;
+	LPassD* mDirectionalLightPass;
+	LPassP* mPointLightPass;
 
 	Geometry* mTestCube;
 

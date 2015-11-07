@@ -40,9 +40,9 @@ void DeferredApplication::onInit()
 	a.loadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
 	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
-	m_camera = new Camera;
-	m_camera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
-	m_camera->SetView(glm::vec3(0, 2, 10), glm::vec3(0, 2, 0), glm::vec3(0, 1, 0));
+	mCamera = new Camera;
+	mCamera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
+	mCamera->SetView(glm::vec3(0, 2, 10), glm::vec3(0, 2, 0), glm::vec3(0, 1, 0));
 
 	Keyboard::Init();
 
@@ -69,50 +69,53 @@ void DeferredApplication::onInit()
 
 void DeferredApplication::onPlay()
 {
-	m_light = new LightD;
+	mLight = new LightD;
 	mPointLight = new LightP;
-	m_soulspear = new Geometry;
-	m_soulspear2 = new Geometry;
-	bunny = new Geometry;
-	floor = new Geometry;
+	mSoulspear = new Geometry;
+	mSoulspear2 = new Geometry;
+	mBunny = new Geometry;
+	mFloor = new Geometry;
 
+
+	//directional light
+	mLight->color = glm::vec3(1, 1, 1);
+	mLight->direction = glm::normalize(glm::vec3(0,.5f,1));
+	mLight->ambientIntensity = 1;
+	mLight->diffuseIntensity = 1;
+	mLight->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
+	mLight->view = glm::lookAt(mLight->direction, glm::vec3(0), glm::vec3(0, 1, 0));
+
+	//point light
 	mPointLight->color = glm::vec3(1, 1, 0);
 	mPointLight->position = glm::vec4(0, 2, 2, 1);
 	mPointLight->attenuation.kC = 0;
 
-	m_light->color = glm::vec3(1, 1, 1);
-	m_light->direction = glm::normalize(glm::vec3(0,.5f,1));
-	m_light->ambientIntensity = 1;
-	m_light->diffuseIntensity = 1;
-	m_light->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
-	m_light->view = glm::lookAt(m_light->direction, glm::vec3(0), glm::vec3(0, 1, 0));
+	mSoulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	mSoulspear->tris = "SoulSpear_Low:SoulSpear_Low1";
+	mSoulspear->diffuse = "soulspear_diffuse.tga";
+	mSoulspear->specPower = 40.0f;
+	mSoulspear->transform = mat4(1);
 
-	m_soulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear->tris = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
-	m_soulspear->specPower = 40.0f;
-	m_soulspear->transform = mat4(1);
+	mFloor->mesh = "Quad";
+	mFloor->tris = "Quad";
+	mFloor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
 
-	floor->mesh = "Quad";
-	floor->tris = "Quad";
-	floor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
+	mSoulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
+	mSoulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
+	mSoulspear2->diffuse = "soulspear_diffuse.tga";
+	mSoulspear2->specPower = 128.0f;
+	mSoulspear2->transform = translate(-5, 0,0);
 
-	m_soulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
-	m_soulspear2->diffuse = "soulspear_diffuse.tga";	// loadFBX will need to name every handle it creates,
-	m_soulspear2->specPower = 128.0f;
-	m_soulspear2->transform = translate(-5, 0,0);
-
-	bunny->mesh = "Bunny";
-	bunny->tris = "Bunny";
-	bunny->specPower = 128.f;
+	mBunny->mesh = "Bunny";
+	mBunny->tris = "Bunny";
+	mBunny->specPower = 128.f;
 
 
-	m_geometryPass = new GPass("GeometryPassPhong", "GeometryPass");
-	m_directionalLightPass = new LPassD("LightPassDirectional", "LightPass");
+	mGeometryPass = new GPass("GeometryPassPhong", "GeometryPass");
+	mDirectionalLightPass = new LPassD("LightPassDirectional", "LightPass");
 	mShadowPass = new ShadowPass("ShadowPass", "ShadowPass");
 	mPointLightPass = new LPassP("LightPassPoint", "LightPass");
-	m_compositePass = new CPass("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
+	mCompositePass = new CPass("CompPass", "Screen"); // Screen is defined in nsfw::Assets::init()
 }
 
 void DeferredApplication::onStep()
@@ -120,90 +123,92 @@ void DeferredApplication::onStep()
 	float moveSpeed = 10;
 	float deltaTime = nsfw::Window::instance().GetDeltaTime();
 
-	m_light->update(deltaTime);
+	mLight->update(deltaTime);
 	mPointLight->Update(deltaTime);
-	m_camera->Update(nsfw::Window::instance().getTime());
+	mCamera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(deltaTime, moveSpeed);
-	m_soulspear->update();
-	//bunny->update();
+	mSoulspear->update();
+	//mBunny->update();
 
-	//TODO_D("Draw all of our renderpasses!");
-	m_geometryPass->prep();
+	mGeometryPass->prep();
 
-	m_geometryPass->draw(*m_camera, *m_soulspear);
-	m_geometryPass->draw(*m_camera, *m_soulspear2);
-	m_geometryPass->draw(*m_camera, *floor);
-	//m_geometryPass->draw(*m_camera, *bunny);
+	mGeometryPass->draw(*mCamera, *mSoulspear);
+	mGeometryPass->draw(*mCamera, *mSoulspear2);
+	mGeometryPass->draw(*mCamera, *mFloor);
+	//mGeometryPass->draw(*mCamera, *mBunny);
 
-	m_geometryPass->post();
+	mGeometryPass->post();
 
 	mShadowPass->prep();
-	mShadowPass->draw(*m_light, *m_soulspear);
-	mShadowPass->draw(*m_light, *m_soulspear2);
-	mShadowPass->draw(*m_light, *floor);
+	mShadowPass->draw(*mLight, *mSoulspear);
+	mShadowPass->draw(*mLight, *mSoulspear2);
+	mShadowPass->draw(*mLight, *mFloor);
 	mShadowPass->post();
 
-	m_directionalLightPass->prep();
-	m_directionalLightPass->draw(*m_camera, *m_light);
-	m_directionalLightPass->post();
+	mDirectionalLightPass->prep();
+	mDirectionalLightPass->draw(*mCamera, *mLight);
+	mDirectionalLightPass->post();
 
-	//mPointLightPass->prep();
-	//mPointLightPass->draw(*m_camera, *mPointLight);
-	//mPointLightPass->post();
+	mPointLightPass->prep();
+	mPointLightPass->draw(*mCamera, *mPointLight);
+	mPointLightPass->post();
 
-	m_compositePass->prep();
+	mCompositePass->prep();
+
 	/*
 	DEBUG
 	to send single texture to the screen: 
-	comment out -> m_compositePass->draw(); 
+	comment out -> mCompositePass->draw(); 
 	set mDebugTexture to texture -> "name of texture asset"; 
-	call m_compositePass->DrawDebugTexture(mDebugTexture);
-
+	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
-	m_compositePass->draw();
+	mCompositePass->draw();
 	//mDebugTexture = "ShadowMap";
-	//m_compositePass->DrawDebugTexture(mDebugTexture);
-	m_compositePass->post();
+	//mCompositePass->DrawDebugTexture(mDebugTexture);
+
+	mCompositePass->post();
 }
 
 void DeferredApplication::onTerm()
 {
-	delete m_camera;
-	delete m_light;
+	delete mCamera;
+	delete mLight;
 	delete mPointLight;
-	delete m_soulspear;
-	delete floor;
+	delete mSoulspear;
+	delete mSoulspear2;
+	delete mBunny;
+	delete mFloor;
 
-	delete m_compositePass;
-	delete m_geometryPass;
+	delete mCompositePass;
+	delete mGeometryPass;
 	delete mShadowPass;
-	delete m_directionalLightPass;
+	delete mDirectionalLightPass;
 }
 
 void DeferredApplication::UpdateFlyCamControls(float deltaTime, float moveSpeed)
 {
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_W) || Keyboard::IsKeyRepeat(Keyboard::KEY_W))
 	{
-		m_camera->Move(moveSpeed * deltaTime);
+		mCamera->Move(moveSpeed * deltaTime);
 	}
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_X) || Keyboard::IsKeyRepeat(Keyboard::KEY_X))
 	{
-		m_camera->Move(-moveSpeed * deltaTime);
+		mCamera->Move(-moveSpeed * deltaTime);
 	}
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_A) || Keyboard::IsKeyRepeat(Keyboard::KEY_A))
 	{
-		m_camera->Slide(-moveSpeed * deltaTime, 0);
+		mCamera->Slide(-moveSpeed * deltaTime, 0);
 	}
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_D) || Keyboard::IsKeyRepeat(Keyboard::KEY_D))
 	{
-		m_camera->Slide(moveSpeed * deltaTime, 0);
+		mCamera->Slide(moveSpeed * deltaTime, 0);
 	}
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_E) || Keyboard::IsKeyRepeat(Keyboard::KEY_E))
 	{
-		m_camera->Slide(0, moveSpeed * deltaTime);
+		mCamera->Slide(0, moveSpeed * deltaTime);
 	}
 	if (Keyboard::IsKeyPressed(Keyboard::KEY_C) || Keyboard::IsKeyRepeat(Keyboard::KEY_C))
 	{
-		m_camera->Slide(0, -moveSpeed * deltaTime);
+		mCamera->Slide(0, -moveSpeed * deltaTime);
 	}
 }
