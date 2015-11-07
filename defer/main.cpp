@@ -152,7 +152,17 @@ void DeferredApplication::onStep()
 	//mPointLightPass->post();
 
 	m_compositePass->prep();
-	m_compositePass->draw();
+	/*
+	DEBUG
+	to send single texture to the screen: 
+	comment out -> m_compositePass->draw(); 
+	set mDebugTexture to texture -> "name of texture asset"; 
+	call m_compositePass->DrawDebugTexture(mDebugTexture);
+
+	*/
+	//m_compositePass->draw();
+	mDebugTexture = "ShadowMap";
+	m_compositePass->DrawDebugTexture(mDebugTexture);
 	m_compositePass->post();
 }
 

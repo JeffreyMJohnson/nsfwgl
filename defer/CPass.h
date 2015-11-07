@@ -43,4 +43,16 @@ public:
 
 
 	}
+
+	void DrawDebugTexture(nsfw::Asset<nsfw::ASSET::TEXTURE>& debugTexture)
+	{
+		setUniform("DebugTexture", nsfw::UNIFORM::TEX2, &debugTexture, 2);
+		bool bTrue = GL_TRUE;
+		setUniform("OutputDebugTexture", nsfw::UNIFORM::BOOL, &bTrue);
+		unsigned quadVAOHandle = nsfw::Assets::instance().get<nsfw::ASSET::VAO>("Quad");
+		unsigned quadNumtris = nsfw::Assets::instance().get<nsfw::ASSET::SIZE>("Quad");
+
+		glBindVertexArray(quadVAOHandle);
+		glDrawElements(GL_TRIANGLES, quadNumtris, GL_UNSIGNED_INT, 0);
+	}
 };

@@ -32,6 +32,10 @@ class DeferredApplication : public nsfw::Application
 
 	Geometry* mTestCube;
 
+	//for debug - sending a single texture straight to the
+	//cpass for drawing to screen.
+	nsfw::Asset<nsfw::ASSET::TEXTURE> mDebugTexture;
+
 	void UpdateFlyCamControls(float deltaTime, float moveSpeed);
 
 public:
