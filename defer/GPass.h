@@ -8,6 +8,8 @@
 class GPass : public nsfw::RenderPass
 {
 public:
+	GPass(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
+
 	void prep()
 	{
 		
@@ -25,12 +27,8 @@ public:
 		glBindVertexArray(0);
 	}
 
-	GPass(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
-
 	void draw(Camera &c, const Geometry &g)
 	{
-		//c.GetProjection();
-
 		//vert shader uniforms
 		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));
 		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetView()));
@@ -44,7 +42,7 @@ public:
 			usingTexture = true;
 		}
 		//HACKHACK
-		setUniform("isTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+		setUniform("IsTexture", nsfw::UNIFORM::BOOL, &usingTexture);
 		
 
 		glBindVertexArray(*g.mesh);

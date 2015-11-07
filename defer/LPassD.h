@@ -6,10 +6,12 @@
 class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal, ShadowMap;
-	glm::vec3 ambientLight = vec3(.25f,.25f,.25f);
+	glm::vec3 ambientLight = vec3(0,0,0);
 	float specPower = 128;
-
-	//glm::mat4 lightMatrix;
+	glm::mat4 textureSpaceOffset = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f,
+											 0.0f, 0.5f, 0.0f, 0.0f,
+											 0.0f, 0.0f, 0.5f, 0.0f,
+											 0.5f, 0.5f, 0.5f, 1.0f);
 
 public:
 	LPassD(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName), position("GPassPosition"), normal("GPassNormal"), ShadowMap("ShadowMap") {}
@@ -34,29 +36,20 @@ public:
 
 	void draw(Camera &c, const LightD &l)
 	{
-		glm::mat4 textureSpaceOffset(
-			0.5f, 0.0f, 0.0f, 0.0f,
-			0.0f, 0.5f, 0.0f, 0.0f,
-			0.0f, 0.0f, 0.5f, 0.0f,
-			0.5f, 0.5f, 0.5f, 1.0f
-			);
-
-		//set frag shader uniforms
-		//set the light properties
-		setUniform("directional.Direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
-		setUniform("directional.Color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
-		setUniform("directional.projection", nsfw::UNIFORM::MAT4, glm::value_ptr(l.projection));
-		setUniform("directional.view", nsfw::UNIFORM::MAT4, glm::value_ptr(l.view));
+		setUniform("Directional.Direction", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.direction));
+		setUniform("Directional.Color", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(l.color));
+		setUniform("Directional.Projection", nsfw::UNIFORM::MAT4, glm::value_ptr(l.projection));
+		setUniform("Directional.View", nsfw::UNIFORM::MAT4, glm::value_ptr(l.view));
 		setUniform("TextureSpaceOffset", nsfw::UNIFORM::MAT4, glm::value_ptr(textureSpaceOffset));
 
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
 		setUniform("CameraView", nsfw::UNIFORM::MAT4, glm::value_ptr(c.GetView()));
-		setUniform("specPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
-		setUniform("ambient", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
-		setUniform("positionTexture", nsfw::UNIFORM::TEX2, position, 0);
+		setUniform("SpecPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
+		setUniform("AmbientColor", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
+		setUniform("PositionMap", nsfw::UNIFORM::TEX2, position, 0);
 
-		setUniform("normalTexture", nsfw::UNIFORM::TEX2, normal, 1);
+		setUniform("NormalMap", nsfw::UNIFORM::TEX2, normal, 1);
 		setUniform("ShadowMap", nsfw::UNIFORM::TEX2, ShadowMap, 2);
 
 

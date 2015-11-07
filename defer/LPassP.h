@@ -16,8 +16,6 @@ public:
 	void prep()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
-		//dont clear the fucking buffer!! need to blend it with previous!
-		//glClear(GL_COLOR_BUFFER_BIT);
 
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_ONE, GL_ONE);

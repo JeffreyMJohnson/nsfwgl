@@ -10,7 +10,6 @@ public:
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		glEnable(GL_DEPTH_TEST);
-		//glViewport(0, 0, 1024, 1024);
 		glClear(GL_DEPTH_BUFFER_BIT);
 		glUseProgram(*shader);
 
@@ -22,7 +21,6 @@ public:
 		glDisable(GL_DEPTH_TEST);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glUseProgram(0);
-		//glViewport(0, 0, 1280, 720);
 	}
 
 	void draw(LightD& light, Geometry& geometry)

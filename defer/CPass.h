@@ -6,18 +6,18 @@
 
 class CPass : public nsfw::RenderPass
 {
-	nsfw::Asset<nsfw::ASSET::TEXTURE> albedo, depth, light;
+	nsfw::Asset<nsfw::ASSET::TEXTURE> albedo, light;
 
 public:
 
 	CPass(const char *shaderName, const char *fboName)
-		: RenderPass(shaderName, fboName), albedo("GPassAlbedo"), depth("GPassDepth"), light("LPassColor")
+		: RenderPass(shaderName, fboName), albedo("GPassAlbedo"), light("LPassColor")
 	{}
 
 
 	void prep()
 	{
-		glClearColor(.1f, .5f, .1f, 1);
+		glClearColor(0,0,0,0);
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 		glClear(GL_COLOR_BUFFER_BIT);
 		glUseProgram(*shader);
