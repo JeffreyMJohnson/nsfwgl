@@ -7,7 +7,29 @@ struct LightD
 	float ambientIntensity = 1;
 	glm::vec3 direction = vec3(0, 1, 0);
 	float diffuseIntensity = 1;
-	void update() {}
+	glm::mat4 projection;
+	glm::mat4 view;
+	void update(float deltaTime)
+	{
+		if (direction.x > maxDirection)
+		{
+			direction.x = maxDirection;
+			moveDirection *= -1;
+		}
+		else if (direction.x < minDirection)
+		{
+			direction.x = minDirection;
+			moveDirection *= -1;
+		}
+		direction.x += moveSpeed * moveDirection * deltaTime;
+		view = glm::lookAt(direction, glm::vec3(0), glm::vec3(0, 1, 0));
+	}
+
+private:
+	float maxDirection = 1;
+	float minDirection = -1;
+	float moveSpeed = .5f;
+	int moveDirection = 1;
 };
 
 struct LightP

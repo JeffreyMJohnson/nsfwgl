@@ -17,47 +17,36 @@ struct Light
 	Attenuation attenuation;
 };
 
-vec3 GetLightDirection(vec3 lightPosition, vec3 vertexPosition)
-{
-	return normalize(lightPosition - vertexPosition);
-}
-
 //direction in view-space
 uniform Light pointLight;
 
 uniform vec3 CameraPosition;
+uniform mat4 View;
 uniform float specPower;
 
 uniform vec3 ambient;
-uniform mat4 Projection;//camera 
-uniform mat4 View;//camera
-uniform sampler2D positionTexture;//world space
+uniform sampler2D positionTexture;//view space
 uniform sampler2D normalTexture;
 
 void main()
 {
 	vec3 normal = normalize(texture(normalTexture, vTexCoord).xyz);
-	vec3 position = texture(positionTexture, vTexCoord).xyz;//world space
-	position = (Projection * View * vec4(position, 1)).xyz;//MVP space
+	vec3 position = texture(positionTexture, vTexCoord).xyz;//view space
 	vec3 lightViewPosition = (View * vec4(pointLight.Position, 1)).xyz;
 
 	//compute diffuse lighting
 	vec3 lightDirection = normalize(lightViewPosition - position);
-	float diffuseLight = max(dot(normal, lightDirection), 0);
-	vec3 diffuseResult = pointLight.Color * diffuseLight;
-
+	float d = max(dot(normal, lightDirection), 0); //lambertian term
+	
 	//compute specular lighting
-	vec3 viewPointDirection = normalize(CameraPosition - position);
-	vec3 halfVector = normalize(lightDirection + viewPointDirection);
-	float specularLight = pow(max(dot(normal, halfVector), 0), specPower);
-	if (diffuseLight <= 0)
-	{
-		specularLight = 0;
-	}
-	vec3 specularResult = pointLight.Color * specularLight;
+	vec3 CamViewPosition = (View * vec4(CameraPosition, 1)).xyz;
+	vec3 E = normalize(CamViewPosition - position); //Eye vector
+	vec3 R = reflect(-lightDirection, normal);//reflection vector
+	float s = pow(max(dot(E, R), 0), specPower);//specular
 
 	//calc attenuation
 	float distance = distance(position, lightViewPosition);
 	float attFactor = 1.0f / (distance * distance);
-	LightOutput = ambient + attFactor * (diffuseLight + specularLight);
+
+	LightOutput = attFactor * ((pointLight.Color * d) + (pointLight.Color * s));
 }

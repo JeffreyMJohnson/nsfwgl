@@ -29,7 +29,7 @@ public:
 
 	void draw(Camera &c, const Geometry &g)
 	{
-		c.GetProjection();
+		//c.GetProjection();
 
 		//vert shader uniforms
 		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(c.GetProjection()));

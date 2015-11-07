@@ -18,9 +18,7 @@ void main()
 {
 
 	vNormal = normalize(View * Model * Normal);
-	//MVP coords
-	//vPosition = View * Model * Position;
-	vPosition = Model * Position;//world space
+	vPosition = View * Model * Position;
 	vTexCoord = TexCoord;
 	gl_Position = Projection * View * Model * Position;
 }
