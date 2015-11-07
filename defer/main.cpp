@@ -160,9 +160,9 @@ void DeferredApplication::onStep()
 	call m_compositePass->DrawDebugTexture(mDebugTexture);
 
 	*/
-	//m_compositePass->draw();
-	mDebugTexture = "ShadowMap";
-	m_compositePass->DrawDebugTexture(mDebugTexture);
+	m_compositePass->draw();
+	//mDebugTexture = "ShadowMap";
+	//m_compositePass->DrawDebugTexture(mDebugTexture);
 	m_compositePass->post();
 }
 

@@ -9,12 +9,12 @@ layout(location = 1) out vec3 gpassPosition;
 layout(location = 2) out vec3 gpassNormal;
 
 
-uniform bool isTexture = true;
+uniform bool IsTexture = true;
 uniform sampler2D Diffuse;
 
 void main() 
 {
-	if (isTexture)
+	if (IsTexture)
 	{
 		gpassAlbedo = texture(Diffuse, vTexCoord).xyz;
 	}
