@@ -8,7 +8,7 @@
 	stored on the video card. From this, we can load data from files, or generate
 	new objects as they are needed.
 
-	
+
 	In it are two objects.
 
 	The Asset struct contains all of the information necessary to fetch the openGL handle
@@ -23,17 +23,17 @@
 	To load an image into the asset library->
 		auto &a = Assets::instance();
 
-		a.loadTexture("JohnDiffuseMap","/path/to/file/john/diffuse.png");
+		a.LoadTexture("JohnDiffuseMap","/path/to/file/john/diffuse.png");
 
 	To create an asset reference->
-		Asset<TEXTURE> diffuseMap = "JohnDiffuseMap";	
+		Asset<TEXTURE> diffuseMap = "JohnDiffuseMap";
 
 	To use the asset reference to fetch the handle, any of the following will work:
 		a[diffuseMap];
 		a.get(diffuseMap);
 		a.get<TEXTURE>("JohnDiffuseMap");
 		a.get(TEXTURE,"JohnDiffuseMap");
-		
+
 
 		*** Implement the necessary LOAD and MAKE functions, as well as the TERM function.
 */
@@ -69,6 +69,18 @@ namespace nsfw
 		operator const void*() const { return Assets::instance().getUNIFORM(*this); }
 	};
 
+	struct TextureParam_i
+	{
+		GLenum target, pName;
+		GLint param;
+		TextureParam_i(GLenum pName, GLint param, GLenum target = GL_TEXTURE_2D)
+		{
+			this->target = target;
+			this->param = param;
+			this->pName = pName;
+		}
+	};
+
 	/*
 		Asset management singleton. It should be the only place that the glGen**** functions
 		are called, and the only place where glDelete/Destroy/etc. are called. It should
@@ -91,6 +103,12 @@ namespace nsfw
 		bool setINTERNAL(ASSET::GL_HANDLE_TYPE t, const char *name, GL_HANDLE handle);
 
 		unsigned int LoadSubShader(unsigned int shaderType, const char * path);
+
+		void SetTextureParam_i(TextureParam_i textureParam)
+		{
+			glTexParameteri(textureParam.target, textureParam.pName, textureParam.param);
+		}
+
 	public:
 		// Singleton accessor
 		static Assets &instance() { static Assets a; return a; }
@@ -116,27 +134,25 @@ namespace nsfw
 		/////////////////////
 
 		// Should also allocate for IBO and VBO
-		bool makeVAO(const char *name, const struct Vertex *verts, unsigned vsize, const unsigned *tris, unsigned tsize);
+		bool MakeVAO(const char *name, const struct Vertex *verts, unsigned vsize, const unsigned *tris, unsigned tsize);
 
-		// should call makeTexture nTextures number of times
-		bool makeFBO(const char *name, unsigned w, unsigned h, unsigned nTextures, const char *names[], const unsigned depths[]);
-
-		bool makeRBO(const char* name, unsigned w, unsigned h, unsigned depth, const char *pixels = nullptr);
+		// should call MakeTexture nTextures number of times
+		bool MakeFBO(const char *name, unsigned w, unsigned h, unsigned nTextures, const char *names[], const unsigned depths[]);
 
 		// should allocate space for a texture, but not necessarily set its data
-		bool makeTexture(const char *name, unsigned w, unsigned h, unsigned depth, const char *pixels = nullptr);
+		bool MakeTexture(const char *name, unsigned w, unsigned h, unsigned depth, const char *pixels = nullptr);
 
-		// should load a texture from a file, use makeTexture to alloc, and then copy filedata in
-		bool loadTexture(const char *name, const char *path);
+		// should load a texture from a file, use MakeTexture to alloc, and then copy filedata in
+		bool LoadTexture(const char *name, const char *path);
 
 		// should load a shader from file
-		bool loadShader(const char *name, const char *vpath, const char *fpath);
+		bool LoadShader(const char *name, const char *vpath, const char *fpath);
 
 		// should load from an FBX, adding assets to the library as they are discovered
-		bool loadFBX(const char *name, const char *path);
+		bool LoadFBX(const char *name, const char *path);
 
 		// Should load an OBJ from file, adding appropriate assets to the library
-		bool loadOBJ(const char *name, const char *path);
+		bool LoadOBJ(const char *name, const char *path);
 
 		//load some default assets
 		void init();
@@ -145,4 +161,4 @@ namespace nsfw
 
 		static void CheckGLError();
 	};
- }
+}

@@ -34,11 +34,11 @@ void DeferredApplication::onInit()
 	auto &a = nsfw::Assets::instance();
 
 	// Load Shaders
-	a.loadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
-	a.loadShader("ShadowPass", "./shaders/ShadowPass_vert.glsl", "./shaders/ShadowPass_frag.glsl");
-	a.loadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
-	a.loadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
-	a.loadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
+	a.LoadShader("GeometryPassPhong", "./shaders/Gpass_vert.glsl", "./shaders/Gpass_frag.glsl");
+	a.LoadShader("ShadowPass", "./shaders/ShadowPass_vert.glsl", "./shaders/ShadowPass_frag.glsl");
+	a.LoadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
+	a.LoadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
+	a.LoadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
 	mCamera = new Camera;
 	mCamera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
@@ -49,22 +49,19 @@ void DeferredApplication::onInit()
 	// Setup FBOs
 	const char *gpassTextureNames[] = { "GPassAlbedo","GPassPosition","GPassNormal","GPassDepth" };
 	const unsigned gpassDepths[] = { GL_RGB8,GL_RGB32F,GL_RGB32F,GL_DEPTH_COMPONENT }; // GL_RGB8, GL_RGB32, GL_RGB32, GL_DEPTH_COMPONENT
-	a.makeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
+	a.MakeFBO("GeometryPass", w.getWidth(), w.getHeight(), 4, gpassTextureNames, gpassDepths);
 
 	const char *shadowPassTextureNames[] = { "ShadowMap" };
 	const unsigned shadowPassDepths[] = { GL_DEPTH_COMPONENT };
-	a.makeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, shadowPassTextureNames, shadowPassDepths);
+	a.MakeFBO("ShadowPass", w.getWidth(), w.getHeight(), 1, shadowPassTextureNames, shadowPassDepths);
 
 	const char *lpassTextureNames[] = { "LPassColor" };
 	const unsigned lpassDepths[] = { GL_RGB8 }; // GL_RGB8
-	a.makeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths);
+	a.MakeFBO("LightPass", w.getWidth(), w.getHeight(), 1, lpassTextureNames, lpassDepths);
 
 	// Load any other textures and geometry we want to use
-	a.loadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
+	a.LoadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
 	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
-
-
-
 }
 
 void DeferredApplication::onPlay()
@@ -79,7 +76,7 @@ void DeferredApplication::onPlay()
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
-	mLight->direction = glm::normalize(glm::vec3(0,.5f,1));
+	mLight->direction = glm::normalize(glm::vec3(0,.75f, 1));
 	mLight->ambientIntensity = 1;
 	mLight->diffuseIntensity = 1;
 	mLight->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);

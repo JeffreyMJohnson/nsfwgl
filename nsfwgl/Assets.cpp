@@ -77,7 +77,7 @@ unsigned int nsfw::Assets::LoadSubShader(unsigned int shaderType, const char * p
 }
 
 
-bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsigned vsize, const unsigned * tris, unsigned tsize)
+bool nsfw::Assets::MakeVAO(const char * name, const struct Vertex *verts, unsigned vsize, const unsigned * tris, unsigned tsize)
 {
 	GLuint vao, vbo, ibo;
 	glGenVertexArrays(1, &vao);
@@ -126,7 +126,7 @@ bool nsfw::Assets::makeVAO(const char * name, const struct Vertex *verts, unsign
 	return true;
 }
 
-bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned nTextures, const char * names[], const unsigned depths[])
+bool nsfw::Assets::MakeFBO(const char * name, unsigned w, unsigned h, unsigned nTextures, const char * names[], const unsigned depths[])
 {
 	// setup framebuffer
 	GLuint fbo;
@@ -137,7 +137,7 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	int colorAttachmentCount = 0;
 	for (int i = 0; i < nTextures; i++)
 	{
-		makeTexture(names[i], w, h, depths[i]);
+		MakeTexture(names[i], w, h, depths[i]);
 
 		GLenum attachment = (depths[i] == GL_DEPTH_COMPONENT) ? GL_DEPTH_ATTACHMENT : (GL_COLOR_ATTACHMENT0 + colorAttachmentCount);
 		glFramebufferTexture(GL_FRAMEBUFFER, attachment, get(TEXTURE, names[i]), 0);
@@ -164,7 +164,7 @@ bool nsfw::Assets::makeFBO(const char * name, unsigned w, unsigned h, unsigned n
 	return true;
 }
 
-bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsigned depth, const char *pixels)
+bool nsfw::Assets::MakeTexture(const char *name, unsigned w, unsigned h, unsigned depth, const char *pixels)
 {
 	glGetError();
 	GLuint tex;
@@ -174,7 +174,6 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	{
 		GLenum status = glGetError();
 		assert(status == GL_NO_ERROR);
-
 		glTexStorage2D(GL_TEXTURE_2D, 1, depth, w, h);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
 		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
@@ -203,7 +202,7 @@ bool nsfw::Assets::makeTexture(const char * name, unsigned w, unsigned h, unsign
 	return true;
 }
 
-bool nsfw::Assets::loadTexture(const char * name, const char * path)
+bool nsfw::Assets::LoadTexture(const char * name, const char * path)
 {
 	int imageWidth = 0, imageHeight = 0, imageFormat = 0;
 	const char* data = (const char*)stbi_load(path, &imageWidth, &imageHeight, &imageFormat, STBI_default);
@@ -223,13 +222,13 @@ bool nsfw::Assets::loadTexture(const char * name, const char * path)
 		return false;
 	}
 
-	makeTexture(name, imageWidth, imageHeight, imageFormat, data);
+	MakeTexture(name, imageWidth, imageHeight, imageFormat, data);
 	stbi_image_free((void*)data);
 
 	return true;
 }
 
-bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char * fpath)
+bool nsfw::Assets::LoadShader(const char * name, const char * vpath, const char * fpath)
 {
 	unsigned int vertex = LoadSubShader(GL_VERTEX_SHADER, vpath);
 	if (vertex == 0)
@@ -266,7 +265,7 @@ bool nsfw::Assets::loadShader(const char * name, const char * vpath, const char 
 	return true;
 }
 
-bool nsfw::Assets::loadFBX(const char * name, const char * path)
+bool nsfw::Assets::LoadFBX(const char * name, const char * path)
 {
 	FBXFile file;
 	std::vector<Vertex> vertices;
@@ -296,7 +295,7 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 		}
 		indices = mesh->m_indices;
 
-		makeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
+		MakeVAO(mesh->m_name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 
 	//load textures using fbx file, its already loaded so why not
@@ -320,13 +319,13 @@ bool nsfw::Assets::loadFBX(const char * name, const char * path)
 			imageFormat = GL_RGBA; 
 			break;
 		}
-		makeTexture(tex->name.c_str(), tex->width, tex->height, imageFormat, (char*)tex->data);
+		MakeTexture(tex->name.c_str(), tex->width, tex->height, imageFormat, (char*)tex->data);
 	}
 	file.unload();
 	return true;
 }
 
-bool nsfw::Assets::loadOBJ(const char * name, const char * path)
+bool nsfw::Assets::LoadOBJ(const char * name, const char * path)
 {
 	std::vector<Vertex> vertices;
 	std::vector<unsigned int> indices;
@@ -383,7 +382,7 @@ bool nsfw::Assets::loadOBJ(const char * name, const char * path)
 			vertices.push_back(vertex);
 		}
 		indices = mesh.indices;
-		return makeVAO((shape.name.length() == 0) ? name : shape.name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
+		return MakeVAO((shape.name.length() == 0) ? name : shape.name.c_str(), vertices.data(), vertices.size(), indices.data(), indices.size());
 	}
 }
 
@@ -391,8 +390,8 @@ void nsfw::Assets::init()
 {
 	setINTERNAL(FBO, "Screen", 0);
 
-	makeVAO("Cube", CubeVerts, 24, CubeTris, 36);
-	makeVAO("Quad", QuadVerts, 4, QuadTris, 6);
+	MakeVAO("Cube", CubeVerts, 24, CubeTris, 36);
+	MakeVAO("Quad", QuadVerts, 4, QuadTris, 6);
 }
 
 void nsfw::Assets::term()
