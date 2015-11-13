@@ -12,6 +12,7 @@ struct DirectionalLight
 	mat4 View;
 };
 
+
 //direction in view-space
 uniform DirectionalLight Directional;
 
@@ -42,11 +43,33 @@ void main()
 	//compute diffuse lighting
 	vec3 lightDirection = Directional.Direction;
 	float d = max(dot(normal, lightDirection), 0); //lambertian term
+	float visibility = 0;
 
 	//shadow
 	if (texture(ShadowMap, shadowCoord.xy).r < shadowCoord.z - ShadowBias)
 	{
 		d = 0;
+		visibility = 0;
+		vec2 texel = 1.0f / textureSize(ShadowMap, 0).xy;
+		if (texture(ShadowMap, shadowCoord.xy + vec2(-texel.x, texel.y)).r >= shadowCoord.z - ShadowBias)
+		{
+			visibility += 1;
+		}
+		if (texture(ShadowMap, shadowCoord.xy + vec2(-texel.x, 0)).r >= shadowCoord.z- ShadowBias)
+		{
+			visibility += 1;
+		}
+		if (texture(ShadowMap, shadowCoord.xy + vec2(-texel.x, -texel.y)).r >= shadowCoord.z - ShadowBias)
+		{
+			visibility += 1;
+		}
+		if (texture(ShadowMap, shadowCoord.xy + vec2(0, texel.y)).r >= shadowCoord.z - ShadowBias)
+		{
+			visibility += 1;
+		}
+
+		visibility = visibility / 4;
+
 	}
 
 	//compute specular lighting
@@ -55,6 +78,9 @@ void main()
 	vec3 R = reflect(-lightDirection, normal);//reflection vector
 	float s = pow(max(dot(E, R), 0), SpecPower);//specular
 
-	LightOutput = AmbientColor + (Directional.Color * d) + (Directional.Color * s);
+	vec2 UVCoords;
+	float foo = d + visibility;
+
+	LightOutput = AmbientColor + (Directional.Color * foo) + (Directional.Color * s);
 
 }
