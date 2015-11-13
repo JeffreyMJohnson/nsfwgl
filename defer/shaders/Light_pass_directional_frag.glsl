@@ -53,6 +53,33 @@ float Texture2DShadowLERP(sampler2D depths, vec2 size, vec2 uv, float compare, f
 	return c;
 }
 
+float PCF(sampler2D depths, vec2 size, vec2 uv, float compare, float bias)
+{
+	float result = 0.0;
+	for (int x = -2; x <= 2; x++)
+	{
+		for (int y = -2; y <= 2; y++)
+		{
+			vec2 off = vec2(x, y) / size;
+			result += Texture2DCompare(depths, uv + off, compare - bias);
+		}
+	}
+	return result / 25.0;
+}
+
+float PCF2(sampler2D depths, vec2 size, vec2 uv, float compare, float bias)
+{
+	float result = 0.0;
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			vec2 off = vec2(x, y) / size;
+			result += Texture2DShadowLERP(depths, size, uv + off, compare, bias);
+		}
+	}
+	return result / 9.0;
+}
 
 void main()
 {
@@ -67,7 +94,9 @@ void main()
 	vec3 lightDirection = Directional.Direction;
 	float d = max(dot(normal, lightDirection), 0); //lambertian term
 
-	float visibility = Texture2DShadowLERP(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
+	//float visibility = Texture2DShadowLERP(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
+	//float visibility = PCF(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
+	float visibility = PCF2(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
 
 	//compute specular lighting
 	vec3 CamViewPosition = (CameraView * vec4(CameraPosition, 1)).xyz;
