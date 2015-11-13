@@ -29,7 +29,57 @@ uniform sampler2D NormalMap;
 uniform mat4 TextureSpaceOffset;
 uniform sampler2D ShadowMap;
 uniform float ShadowBias = .01;
+uniform vec2 ShadowMapSize = vec2(1280, 720);
 
+float Texture2DCompare(sampler2D depths, vec2 uv, float compare)
+{
+	float depth = texture2D(depths, uv).r;
+	return step(compare, depth);
+}
+
+float Texture2DShadowLERP(sampler2D depths, vec2 size, vec2 uv, float compare, float bias)
+{
+	vec2 texelSize = vec2(1.0) / size;
+	vec2 f = fract(uv * size + 0.5);
+	vec2 centroidUV = floor(uv * size + 0.5) / size;
+
+	float lb = Texture2DCompare(depths, centroidUV + texelSize * vec2(0.0, 0.0), compare - bias);
+	float lt = Texture2DCompare(depths, centroidUV + texelSize * vec2(0.0, 1.0), compare - bias);
+	float rb = Texture2DCompare(depths, centroidUV + texelSize * vec2(1.0, 0.0), compare - bias);
+	float rt = Texture2DCompare(depths, centroidUV + texelSize * vec2(1.0, 1.0), compare - bias);
+	float a = mix(lb, lt, f.y);
+	float b = mix(rb, rt, f.y);
+	float c = mix(a, b, f.x);
+	return c;
+}
+
+float PCF(sampler2D depths, vec2 size, vec2 uv, float compare, float bias)
+{
+	float result = 0.0;
+	for (int x = -2; x <= 2; x++)
+	{
+		for (int y = -2; y <= 2; y++)
+		{
+			vec2 off = vec2(x, y) / size;
+			result += Texture2DCompare(depths, uv + off, compare - bias);
+		}
+	}
+	return result / 25.0;
+}
+
+float PCF2(sampler2D depths, vec2 size, vec2 uv, float compare, float bias)
+{
+	float result = 0.0;
+	for (int x = -1; x <= 1; x++)
+	{
+		for (int y = -1; y <= 1; y++)
+		{
+			vec2 off = vec2(x, y) / size;
+			result += Texture2DShadowLERP(depths, size, uv + off, compare, bias);
+		}
+	}
+	return result / 9.0;
+}
 
 void main()
 {
@@ -43,34 +93,10 @@ void main()
 	//compute diffuse lighting
 	vec3 lightDirection = Directional.Direction;
 	float d = max(dot(normal, lightDirection), 0); //lambertian term
-	float visibility = 0;
 
-	//shadow
-	if (texture(ShadowMap, shadowCoord.xy).r < shadowCoord.z - ShadowBias)
-	{
-		d = 0;
-		visibility = 0;
-		vec2 texel = 1.0f / textureSize(ShadowMap, 0).xy;
-		if (texture(ShadowMap, shadowCoord.xy + vec2(-texel.x, texel.y)).r >= shadowCoord.z - ShadowBias)
-		{
-			visibility += 1;
-		}
-		if (texture(ShadowMap, shadowCoord.xy + vec2(-texel.x, 0)).r >= shadowCoord.z- ShadowBias)
-		{
-			visibility += 1;
-		}
-		if (texture(ShadowMap, shadowCoord.xy + vec2(-texel.x, -texel.y)).r >= shadowCoord.z - ShadowBias)
-		{
-			visibility += 1;
-		}
-		if (texture(ShadowMap, shadowCoord.xy + vec2(0, texel.y)).r >= shadowCoord.z - ShadowBias)
-		{
-			visibility += 1;
-		}
-
-		visibility = visibility / 4;
-
-	}
+	//float visibility = Texture2DShadowLERP(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
+	//float visibility = PCF(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
+	float visibility = PCF2(ShadowMap, ShadowMapSize, shadowCoord.xy, shadowCoord.z, ShadowBias);
 
 	//compute specular lighting
 	vec3 CamViewPosition = (CameraView * vec4(CameraPosition, 1)).xyz;
