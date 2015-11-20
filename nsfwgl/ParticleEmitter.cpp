@@ -11,8 +11,11 @@ ParticleEmitter::~ParticleEmitter()
 {
 }
 
-void ParticleEmitter::Init(unsigned int maxParticles, unsigned int emitRate, float lifeTimeMin, float lifeTimeMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 endColor)
+void ParticleEmitter::Init(std::string name, unsigned int maxParticles, unsigned int emitRate, float lifeTimeMin, float lifeTimeMax, float velocityMin, float velocityMax, float startSize, float endSize, const glm::vec4 & startColor, const glm::vec4 endColor)
 {
+	using namespace nsfw;
+	using namespace ASSET;
+
 	//set up timer
 	mEmitTimer = 0;
 	mEmitRate = 1.0f / emitRate;
@@ -29,10 +32,11 @@ void ParticleEmitter::Init(unsigned int maxParticles, unsigned int emitRate, flo
 
 	mParticles = std::vector<Particle>(mMaxParticles, Particle());
 	mFirstDead = 0;
-	mVertexData = std::vector<ParticleVertex>(mMaxParticles * 4, ParticleVertex());
+	//mVertexData = std::vector<ParticleVertex>(mMaxParticles * 4, ParticleVertex());
+	mVertexData = std::vector<nsfw::Vertex>(mMaxParticles * 4, nsfw::Vertex());
 
 	std::vector<unsigned int> indexData(mMaxParticles * 6, 0);
-	for (unsigned int i = 0; i < mMaxParticles; ++i) 
+	for (unsigned int i = 0; i < mMaxParticles; ++i)
 	{
 		indexData[i * 6 + 0] = i * 4 + 0;
 		indexData[i * 6 + 1] = i * 4 + 1;
@@ -41,6 +45,10 @@ void ParticleEmitter::Init(unsigned int maxParticles, unsigned int emitRate, flo
 		indexData[i * 6 + 4] = i * 4 + 2;
 		indexData[i * 6 + 5] = i * 4 + 3;
 	}
+
+	Assets::instance().MakeVAO(name.c_str(), nullptr, mMaxParticles * 4, indexData.data(), indexData.size());
+
+	/*
 	glGenVertexArrays(1, &mVAO);
 	glBindVertexArray(mVAO);
 	glGenBuffers(1, &mVBO);
@@ -56,6 +64,7 @@ void ParticleEmitter::Init(unsigned int maxParticles, unsigned int emitRate, flo
 	glBindVertexArray(0);
 	glBindBuffer(GL_ARRAY_BUFFER, 0);
 	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+	*/
 }
 
 void ParticleEmitter::Emit()
