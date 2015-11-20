@@ -139,7 +139,6 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
-    <ClCompile Include="ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -152,7 +151,6 @@
     <ClInclude Include="LPassD.h" />
     <ClInclude Include="LPassP.h" />
     <ClInclude Include="Mouse.h" />
-    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ShadowPass.h" />
   </ItemGroup>
   <ItemGroup>

@@ -4,7 +4,7 @@
 
 #include "Camera.h"
 #include "Geometry.h"
-#include "ParticleEmitter.h"
+//#include "ParticleEmitter.h"
 
 class GPass : public nsfw::RenderPass
 {
@@ -28,16 +28,16 @@ public:
 		glBindVertexArray(0);
 	}
 
-	void Draw(Camera& camera, const Geometry &geometry, const Particle& particle)
-	{
-		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetView()));
-		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetProjection()));
-		setUniform("ParticleColor", nsfw::UNIFORM::TYPE::FLO4, glm::value_ptr(particle.color));
-		bool usingParticle = true;
-		setUniform("IsParticle", nsfw::UNIFORM::BOOL, &usingParticle);
-		glBindVertexArray(*geometry.mesh);
-		glDrawElements(GL_TRIANGLES, *geometry.tris, GL_UNSIGNED_INT, 0);
-	}
+	//void Draw(Camera& camera, const Geometry &geometry, const Particle& particle)
+	//{
+	//	setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetView()));
+	//	setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetProjection()));
+	//	setUniform("ParticleColor", nsfw::UNIFORM::TYPE::FLO4, glm::value_ptr(particle.color));
+	//	bool usingParticle = true;
+	//	setUniform("IsParticle", nsfw::UNIFORM::BOOL, &usingParticle);
+	//	glBindVertexArray(*geometry.mesh);
+	//	glDrawElements(GL_TRIANGLES, *geometry.tris, GL_UNSIGNED_INT, 0);
+	//}
 
 	void draw(Camera &c, const Geometry &g)
 	{

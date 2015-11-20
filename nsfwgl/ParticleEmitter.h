@@ -1,8 +1,12 @@
 #pragma once
-#include "../nsfwgl/nsfw.h"
-#include "glm/glm.hpp"
+#include "nsfw.h"
+#include "Assets.h"
+#include "Vertex.h"
+#include "glm\glm.hpp"
 #include "glm\ext.hpp"
 #include <vector>
+#include <string>
+
 
 
 struct Particle
@@ -15,21 +19,25 @@ struct Particle
 	float lifeSpan;
 };
 
+/*
 struct ParticleVertex
 {
 	glm::vec4 position;
 	glm::vec4 color;
 };
+*/
+
 
 class ParticleEmitter
 {
 public:
 
 	std::vector<Particle> mParticles;
-	std::vector<ParticleVertex> mVertexData;
+	std::vector<nsfw::Vertex> mVertexData;
 	unsigned int mFirstDead;
 	unsigned int mMaxParticles;
 	unsigned int mVAO, mVBO, mIBO;
+	
 	uint mShader = 0;
 
 	glm::vec3 mPosition;
@@ -52,7 +60,8 @@ public:
 	ParticleEmitter();
 	virtual ~ParticleEmitter();
 
-	void Init(unsigned int maxParticles,
+	void Init(std::string name, 
+		unsigned int maxParticles,
 		unsigned int emitRate,
 		float lifeTimeMin, float lifeTimeMax,
 		float velocityMin, float velocityMax,

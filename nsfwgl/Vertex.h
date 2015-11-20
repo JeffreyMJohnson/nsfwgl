@@ -20,6 +20,8 @@ namespace nsfw
 	const vec4 forward(0, 0, 1, 0);
 	const vec4 backward = -forward;
 
+	
+
 	const Vertex CubeVerts[] =
 		// Bottom
 	{   { vec4(-1,-1, 1, 1), down, right, vec2(0,1) },
