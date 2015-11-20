@@ -139,6 +139,7 @@
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
+    <ClCompile Include="ParticleEmitter.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Camera.h" />
@@ -151,6 +152,7 @@
     <ClInclude Include="LPassD.h" />
     <ClInclude Include="LPassP.h" />
     <ClInclude Include="Mouse.h" />
+    <ClInclude Include="ParticleEmitter.h" />
     <ClInclude Include="ShadowPass.h" />
   </ItemGroup>
   <ItemGroup>
@@ -161,6 +163,8 @@
     <None Include="shaders\Gpass_vert.glsl" />
     <None Include="shaders\Light_pass_directional_frag.glsl" />
     <None Include="shaders\Light_pass_directional_vert.glsl" />
+    <None Include="shaders\particle_emitter_frag.glsl" />
+    <None Include="shaders\particle_emitter_vert.glsl" />
     <None Include="shaders\ShadowPass_frag.glsl" />
     <None Include="shaders\ShadowPass_vert.glsl" />
   </ItemGroup>

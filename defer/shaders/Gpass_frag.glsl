@@ -10,13 +10,19 @@ layout(location = 2) out vec3 gpassNormal;
 
 
 uniform bool IsTexture = true;
+uniform bool IsParticle = false;
 uniform sampler2D Diffuse;
+uniform vec4 ParticleColor = vec4(0);
 
 void main() 
 {
 	if (IsTexture)
 	{
 		gpassAlbedo = texture(Diffuse, vTexCoord).xyz;
+	}
+	else if (IsParticle)
+	{
+		gpassAlbedo = ParticleColor.xyz;
 	}
 	else
 	{
