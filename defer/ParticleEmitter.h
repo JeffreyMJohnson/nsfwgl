@@ -10,6 +10,8 @@ struct Particle
 	glm::vec3 position;
 	glm::vec3 velocity;
 	glm::vec4 color;
+	float size;
+
 	float lifeTime;
 	float lifeSpan;
 };
@@ -96,20 +98,28 @@ public:
 		}
 		//resurrect it
 		Particle* newParticle = &mParticles[mFirstDead++];
+
 		//start position is with the emitter
 		newParticle->position = mPosition;
 
 		//set velocity to random value
-		newParticle->velocity = glm::vec3(0, 1, 0) * mVelocityMax;
-		float velocity = (rand() / (float)RAND_MAX) * (mLifeSpanMax - mLifeSpanMin) + mLifeSpanMin;
+		float velocity = (rand() / (float)RAND_MAX) * (mVelocityMax - mVelocityMin) + mVelocityMin;
 		newParticle->velocity.x = (rand() / (float)RAND_MAX) * 2 - 1;
 		newParticle->velocity.y = (rand() / (float)RAND_MAX) * 2 - 1;
 		newParticle->velocity.z = (rand() / (float)RAND_MAX) * 2 - 1;
 		newParticle->velocity = glm::normalize(newParticle->velocity) * velocity;
 
-		//set lifespan
-		newParticle->lifeSpan = 5;
+		//set lifespan randomized
+		//newParticle->lifeSpan = 5;
 		newParticle->lifeTime = 0;
+		newParticle->lifeSpan = (rand() / (float)RAND_MAX) * (mLifeSpanMax - mLifeSpanMin) + mLifeSpanMin;
+
+		//set starting size
+		newParticle->size = mStartSize;
+
+		//set start color
+		newParticle->color = mStartColor;
+
 	}
 
 	void Update(float deltaTime, const glm::mat4& cameraTransform)
@@ -143,8 +153,7 @@ public:
 				particle->position += particle->velocity * deltaTime;
 
 				//size particle
-				//float size = glm::mix(mStartSize, mEndSize, particle->lifeTime / particle->lifeSpan);
-				//glm::scale(particle->transform, glm::vec3(size, size, 1));
+				float size = glm::mix(mStartSize, mEndSize, particle->lifeTime / particle->lifeSpan);
 
 				//color particle
 				particle->color = glm::mix(mStartColor, mEndColor, particle->lifeTime / particle->lifeSpan);

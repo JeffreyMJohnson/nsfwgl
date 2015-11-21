@@ -103,11 +103,11 @@ void DeferredApplication::onPlay()
 	mEmitter->tris = "Quad";
 	mEmitter->mPosition = glm::vec3(1, 1, 0);
 	mEmitter->Init(
-		10,//max particles
+		100,//max particles
 		10,//emit rate
-		2, 5,//lifetime min/max
-		1, 1,//velocity min/max
-		1, 1,//size start/end
+		5, 10,//lifetime min/max
+		1, 10,//velocity min/max
+		1,.5f,//size start/end
 		glm::vec4(1), glm::vec4(1));//color start/end
 
 
@@ -146,7 +146,7 @@ void DeferredApplication::onStep()
 
 	//mGeometryPass->draw(*mCamera, *mSoulspear);
 	//mGeometryPass->draw(*mCamera, *mSoulspear2);
-	mGeometryPass->draw(*mCamera, *mFloor);
+	//mGeometryPass->draw(*mCamera, *mFloor);
 	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
 
@@ -156,6 +156,7 @@ void DeferredApplication::onStep()
 	mShadowPass->draw(*mLight, *mSoulspear);
 	mShadowPass->draw(*mLight, *mSoulspear2);
 	mShadowPass->draw(*mLight, *mFloor);
+
 	mShadowPass->post();
 
 	mDirectionalLightPass->prep();
