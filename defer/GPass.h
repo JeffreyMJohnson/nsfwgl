@@ -4,13 +4,13 @@
 
 #include "Camera.h"
 #include "Geometry.h"
-//#include "ParticleEmitter.h"
+#include "ParticleEmitter.h"
 
 class GPass : public nsfw::RenderPass
 {
 public:
 	GPass(const char *shaderName, const char *fboName) : RenderPass(shaderName, fboName) {}
-	
+
 	void prep()
 	{
 		
@@ -27,17 +27,6 @@ public:
 		glUseProgram(0);
 		glBindVertexArray(0);
 	}
-
-	//void Draw(Camera& camera, const Geometry &geometry, const Particle& particle)
-	//{
-	//	setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetView()));
-	//	setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetProjection()));
-	//	setUniform("ParticleColor", nsfw::UNIFORM::TYPE::FLO4, glm::value_ptr(particle.color));
-	//	bool usingParticle = true;
-	//	setUniform("IsParticle", nsfw::UNIFORM::BOOL, &usingParticle);
-	//	glBindVertexArray(*geometry.mesh);
-	//	glDrawElements(GL_TRIANGLES, *geometry.tris, GL_UNSIGNED_INT, 0);
-	//}
 
 	void draw(Camera &c, const Geometry &g)
 	{
@@ -59,5 +48,23 @@ public:
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);
+	}
+
+	void  Draw(Camera& camera, ParticleEmitter& emitter)
+	{
+		glm::mat4 modelTransform;
+		setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetProjection()));
+		setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetView()));
+
+		for (int i = 0; i < emitter.mFirstDead; i++)
+		{
+			Particle* particle = &emitter.mParticles[i];
+			//create transform T*R*S
+			modelTransform = glm::translate(particle->position) * glm::scale(glm::vec3(particle->size, particle->size, 1));
+
+			setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(modelTransform));
+			glBindVertexArray(*emitter.mesh);
+			glDrawElements(GL_TRIANGLES, *emitter.tris, GL_UNSIGNED_INT, 0);
+		}
 	}
 };

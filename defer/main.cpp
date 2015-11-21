@@ -5,7 +5,6 @@
 #include "Light.h"
 #include "Camera.h"
 #include "Keyboard.h"
-#include "ParticleEmitter.h"
 
 #include "GPass.h"
 #include "CPass.h"
@@ -40,17 +39,11 @@ void DeferredApplication::onInit()
 	a.LoadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	a.LoadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
 	a.LoadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
-	
-	//load shader for the particle emitter
-	mParticleEmitter = new ParticleEmitter();
-	a.LoadShader("ParticleEmitter", "./shaders/particle_emitter_vert.glsl", "./shaders/particle_emitter_frag.glsl");
-	mParticleEmitter->mShader = a.get<ASSET::SHADER>("ParticleEmitter");
 
 	mCamera = new Camera;
 	mCamera->StartupPerspective(45, (float)w.getWidth() / w.getHeight(), .1f, 1000.0f);
 	mCamera->SetView(glm::vec3(0, 2, 10), glm::vec3(0, 2, 0), glm::vec3(0, 1, 0));
 
-	
 	Keyboard::Init();
 
 	// Setup FBOs
@@ -69,6 +62,8 @@ void DeferredApplication::onInit()
 	// Load any other textures and geometry we want to use
 	a.LoadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
 	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
+
+
 }
 
 void DeferredApplication::onPlay()
@@ -79,23 +74,7 @@ void DeferredApplication::onPlay()
 	mSoulspear2 = new Geometry;
 	mBunny = new Geometry;
 	mFloor = new Geometry;
-	mCube = new Geometry;
-
-	//cube
-	mCube->transform = glm::translate(2, 1, 0);
-	mCube->mesh = "Cube";
-	mCube->tris = "Cube";
-
-
-	auto &a = nsfw::Assets::instance();
-	mParticleEmitter->Init(
-		1000, //max particles
-		100, //emit rate
-		.1f, 2.0f, //min-max life time
-		.1, 5, //min-max velocity
-		1, .1f, //start-end size
-		glm::vec4(1, 0, 0, 1), glm::vec4(1, 1, 0, 1));// start-endcolor
-	
+	mEmitter = new ParticleEmitter;
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
@@ -119,6 +98,18 @@ void DeferredApplication::onPlay()
 	mFloor->mesh = "Quad";
 	mFloor->tris = "Quad";
 	mFloor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
+
+	mEmitter->mesh = "Quad";
+	mEmitter->tris = "Quad";
+	mEmitter->mPosition = glm::vec3(1, 1, 0);
+	mEmitter->Init(
+		100,//max particles
+		10,//emit rate
+		5, 10,//lifetime min/max
+		1, 10,//velocity min/max
+		1,.5f,//size start/end
+		glm::vec4(1), glm::vec4(1));//color start/end
+
 
 	mSoulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	mSoulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
@@ -148,17 +139,16 @@ void DeferredApplication::onStep()
 	mCamera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(deltaTime, moveSpeed);
 	mSoulspear->update();
+	mEmitter->Update(deltaTime, mCamera->GetWorldTransform());
 	//mBunny->update();
-	mParticleEmitter->Update(deltaTime, mCamera->GetWorldTransform());
 
 	mGeometryPass->prep();
 
-	mGeometryPass->draw(*mCamera, *mSoulspear);
-	mGeometryPass->draw(*mCamera, *mSoulspear2);
-	mGeometryPass->draw(*mCamera, *mFloor);
-	mParticleEmitter->Draw();
+	//mGeometryPass->draw(*mCamera, *mSoulspear);
+	//mGeometryPass->draw(*mCamera, *mSoulspear2);
+	//mGeometryPass->draw(*mCamera, *mFloor);
+	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
-	mParticleEmitter->Draw();
 
 	mGeometryPass->post();
 
@@ -166,6 +156,7 @@ void DeferredApplication::onStep()
 	mShadowPass->draw(*mLight, *mSoulspear);
 	mShadowPass->draw(*mLight, *mSoulspear2);
 	mShadowPass->draw(*mLight, *mFloor);
+
 	mShadowPass->post();
 
 	mDirectionalLightPass->prep();
@@ -185,9 +176,9 @@ void DeferredApplication::onStep()
 	set mDebugTexture to texture -> "name of texture asset"; 
 	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
-	mCompositePass->draw();
-	//mDebugTexture = "ShadowMap";
-	//mCompositePass->DrawDebugTexture(mDebugTexture);
+	//mCompositePass->draw();
+	mDebugTexture = "GPassAlbedo";
+	mCompositePass->DrawDebugTexture(mDebugTexture);
 
 	mCompositePass->post();
 }
@@ -197,12 +188,11 @@ void DeferredApplication::onTerm()
 	delete mCamera;
 	delete mLight;
 	delete mPointLight;
-	delete mCube;
 	delete mSoulspear;
 	delete mSoulspear2;
 	delete mBunny;
 	delete mFloor;
-	delete mParticleEmitter;
+	delete mEmitter;
 
 	delete mCompositePass;
 	delete mGeometryPass;

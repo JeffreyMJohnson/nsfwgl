@@ -9,10 +9,8 @@ layout(location = 1) out vec3 gpassPosition;
 layout(location = 2) out vec3 gpassNormal;
 
 
-uniform bool IsTexture = true;
-uniform bool IsParticle = false;
+uniform bool IsTexture = false;//debug this needs to be true
 uniform sampler2D Diffuse;
-uniform vec4 ParticleColor = vec4(0);
 
 void main() 
 {
@@ -20,13 +18,9 @@ void main()
 	{
 		gpassAlbedo = texture(Diffuse, vTexCoord).xyz;
 	}
-	else if (IsParticle)
-	{
-		gpassAlbedo = ParticleColor.xyz;
-	}
 	else
 	{
-		gpassAlbedo = vec3(.25f,.25f,.25f);
+		gpassAlbedo = vec3(1);
 	}
 	
 	gpassPosition = vPosition.xyz;//view space

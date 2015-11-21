@@ -21,10 +21,9 @@ class DeferredApplication : public nsfw::Application
 	Geometry* mSoulspear2;
 	Geometry* mBunny;
 	Geometry* mFloor;
-	Geometry* mCube;
 	LightD* mLight;
 	LightP* mPointLight;
-	ParticleEmitter* mParticleEmitter;
+	ParticleEmitter* mEmitter;
 
 	CPass* mCompositePass;
 	GPass* mGeometryPass;
