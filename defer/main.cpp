@@ -146,7 +146,7 @@ void DeferredApplication::onStep()
 
 	//mGeometryPass->draw(*mCamera, *mSoulspear);
 	//mGeometryPass->draw(*mCamera, *mSoulspear2);
-	//mGeometryPass->draw(*mCamera, *mFloor);
+	mGeometryPass->draw(*mCamera, *mFloor);
 	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
 
