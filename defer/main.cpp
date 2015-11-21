@@ -62,6 +62,8 @@ void DeferredApplication::onInit()
 	// Load any other textures and geometry we want to use
 	a.LoadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
 	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
+
+
 }
 
 void DeferredApplication::onPlay()
@@ -72,7 +74,7 @@ void DeferredApplication::onPlay()
 	mSoulspear2 = new Geometry;
 	mBunny = new Geometry;
 	mFloor = new Geometry;
-
+	mEmitter = new ParticleEmitter;
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
@@ -96,6 +98,18 @@ void DeferredApplication::onPlay()
 	mFloor->mesh = "Quad";
 	mFloor->tris = "Quad";
 	mFloor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
+
+	mEmitter->mesh = "Quad";
+	mEmitter->tris = "Quad";
+	mEmitter->mPosition = glm::vec3(1, 1, 0);
+	mEmitter->Init(
+		10,//max particles
+		10,//emit rate
+		2, 5,//lifetime min/max
+		1, 1,//velocity min/max
+		1, 1,//size start/end
+		glm::vec4(1), glm::vec4(1));//color start/end
+
 
 	mSoulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	mSoulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
@@ -125,13 +139,15 @@ void DeferredApplication::onStep()
 	mCamera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(deltaTime, moveSpeed);
 	mSoulspear->update();
+	mEmitter->Update(deltaTime, mCamera->GetWorldTransform());
 	//mBunny->update();
 
 	mGeometryPass->prep();
 
-	mGeometryPass->draw(*mCamera, *mSoulspear);
-	mGeometryPass->draw(*mCamera, *mSoulspear2);
-	mGeometryPass->draw(*mCamera, *mFloor);
+	//mGeometryPass->draw(*mCamera, *mSoulspear);
+	//mGeometryPass->draw(*mCamera, *mSoulspear2);
+	//mGeometryPass->draw(*mCamera, *mFloor);
+	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
 
 	mGeometryPass->post();
@@ -159,9 +175,9 @@ void DeferredApplication::onStep()
 	set mDebugTexture to texture -> "name of texture asset"; 
 	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
-	mCompositePass->draw();
-	//mDebugTexture = "ShadowMap";
-	//mCompositePass->DrawDebugTexture(mDebugTexture);
+	//mCompositePass->draw();
+	mDebugTexture = "GPassAlbedo";
+	mCompositePass->DrawDebugTexture(mDebugTexture);
 
 	mCompositePass->post();
 }
@@ -175,6 +191,7 @@ void DeferredApplication::onTerm()
 	delete mSoulspear2;
 	delete mBunny;
 	delete mFloor;
+	delete mEmitter;
 
 	delete mCompositePass;
 	delete mGeometryPass;

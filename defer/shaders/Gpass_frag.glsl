@@ -9,7 +9,7 @@ layout(location = 1) out vec3 gpassPosition;
 layout(location = 2) out vec3 gpassNormal;
 
 
-uniform bool IsTexture = true;
+uniform bool IsTexture = false;//debug this needs to be true
 uniform sampler2D Diffuse;
 
 void main() 
@@ -20,7 +20,7 @@ void main()
 	}
 	else
 	{
-		gpassAlbedo = vec3(.25f,.25f,.25f);
+		gpassAlbedo = vec3(1);
 	}
 	
 	gpassPosition = vPosition.xyz;//view space

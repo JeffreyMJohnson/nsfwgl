@@ -6,6 +6,7 @@ class Camera;
 struct Geometry;
 struct LightD;
 struct LightP;
+class ParticleEmitter;
 
 class GPass;
 class LPassD;
@@ -22,7 +23,7 @@ class DeferredApplication : public nsfw::Application
 	Geometry* mFloor;
 	LightD* mLight;
 	LightP* mPointLight;
-
+	ParticleEmitter* mEmitter;
 
 	CPass* mCompositePass;
 	GPass* mGeometryPass;

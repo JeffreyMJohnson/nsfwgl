@@ -4,6 +4,7 @@
 
 #include "Camera.h"
 #include "Geometry.h"
+#include "ParticleEmitter.h"
 
 class GPass : public nsfw::RenderPass
 {
@@ -47,5 +48,21 @@ public:
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);
+	}
+
+	void  Draw(Camera& camera, ParticleEmitter& emitter)
+	{
+		glm::mat4 modelTransform;
+
+		for (int i = 0; i < emitter.mFirstDead; i++)
+		{
+			Particle particle = emitter.mParticles[i];
+			modelTransform = glm::translate(particle.position);
+			setUniform("Projection", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetProjection()));
+			setUniform("View", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(camera.GetView()));
+			setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(modelTransform));
+			glBindVertexArray(*emitter.mesh);
+			glDrawElements(GL_TRIANGLES, *emitter.tris, GL_UNSIGNED_INT, 0);
+		}
 	}
 };
