@@ -5,6 +5,7 @@
 #include "Light.h"
 #include "Camera.h"
 #include "Keyboard.h"
+#include "GPUParticleEmitter.h"
 
 #include "GPass.h"
 #include "CPass.h"
@@ -38,7 +39,7 @@ void DeferredApplication::onInit()
 	a.LoadShader("ShadowPass", "./shaders/ShadowPass_vert.glsl", "./shaders/ShadowPass_frag.glsl");
 	a.LoadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	a.LoadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
-	a.LoadShader("ParticlesPass", "./shaders/particle_pass_vert.glsl", "./shaders/particles_pass_frag.glsl");
+	//a.LoadShader("ParticlesPass", "./shaders/particle_pass_vert.glsl", "./shaders/particles_pass_frag.glsl");
 
 	a.LoadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
@@ -76,7 +77,7 @@ void DeferredApplication::onPlay()
 	mSoulspear2 = new Geometry;
 	mBunny = new Geometry;
 	mFloor = new Geometry;
-	mEmitter = new ParticleEmitter;
+	mEmitter = new GPUParticleEmitter;
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
@@ -101,15 +102,11 @@ void DeferredApplication::onPlay()
 	mFloor->tris = "Quad";
 	mFloor->transform = glm::rotate(90.0f, glm::vec3(1, 0, 0)) * glm::scale(glm::vec3(10, 10, 1));
 
-	mEmitter->mesh = "Quad";
-	mEmitter->tris = "Quad";
-	mEmitter->mPosition = glm::vec3(1, 1, 0);
 	mEmitter->Init(
-		100,//max particles
-		50,//emit rate
-		5, 10,//lifetime min/max
-		.1,1,//velocity min/max
-		.1f,.01f,//size start/end
+		1000000,//max particles
+		.1f, 5.0f,//lifespan min/max
+		5,20,//velocity min/max
+		1, 0.1f,//size start/end
 		glm::vec4(1,0,0,1), glm::vec4(1,1,0,1));//color start/end
 
 
@@ -141,9 +138,7 @@ void DeferredApplication::onStep()
 	mCamera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(deltaTime, moveSpeed);
 	mSoulspear->update();
-	mEmitter->Update(deltaTime, mCamera->GetWorldTransform());
 	//mBunny->update();
-
 	mGeometryPass->prep();
 
 	//mGeometryPass->draw(*mCamera, *mSoulspear);
@@ -151,7 +146,7 @@ void DeferredApplication::onStep()
 	mGeometryPass->draw(*mCamera, *mFloor);
 	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
-
+	
 	mGeometryPass->post();
 
 	
@@ -159,7 +154,6 @@ void DeferredApplication::onStep()
 	//mShadowPass->draw(*mLight, *mSoulspear);
 	//mShadowPass->draw(*mLight, *mSoulspear2);
 	mShadowPass->draw(*mLight, *mFloor);
-	mShadowPass->Draw(*mLight, *mEmitter);
 	mShadowPass->post();
 	/**/
 	mDirectionalLightPass->prep();
@@ -179,9 +173,9 @@ void DeferredApplication::onStep()
 	set mDebugTexture to texture -> "name of texture asset"; 
 	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
-	mCompositePass->draw();
-	//mDebugTexture = "GPassAlbedo";
-	//mCompositePass->DrawDebugTexture(mDebugTexture);
+	//mCompositePass->draw();
+	mDebugTexture = "GPassAlbedo";
+	mCompositePass->DrawDebugTexture(mDebugTexture);
 
 	mCompositePass->post();
 }

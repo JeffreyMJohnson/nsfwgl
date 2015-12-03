@@ -36,6 +36,9 @@
     <ClCompile Include="Mouse.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="GPUParticleEmitter.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="CPass.h">
@@ -74,6 +77,9 @@
     <ClInclude Include="ParticleEmitter.h">
       <Filter>Header Files\Objects</Filter>
     </ClInclude>
+    <ClInclude Include="GPUParticleEmitter.h">
+      <Filter>Header Files\Objects</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="shaders\Gpass_frag.glsl">
@@ -107,6 +113,18 @@
       <Filter>Source Files\shaders</Filter>
     </None>
     <None Include="shaders\particles_pass_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\gpuParticle_frag.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\gpuParticle_geom.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\gpuParticle_vert.glsl">
+      <Filter>Source Files\shaders</Filter>
+    </None>
+    <None Include="shaders\gpuParticleUpdate_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

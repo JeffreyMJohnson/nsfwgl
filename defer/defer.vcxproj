@@ -80,6 +80,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dep</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -108,6 +109,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
       <AdditionalIncludeDirectories>$(SolutionDir)dep</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -136,6 +138,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="Camera.cpp" />
+    <ClCompile Include="GPUParticleEmitter.cpp" />
     <ClCompile Include="Keyboard.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Mouse.cpp" />
@@ -146,6 +149,7 @@
     <ClInclude Include="Geometry.h" />
     <ClInclude Include="GPass.h" />
     <ClInclude Include="CPass.h" />
+    <ClInclude Include="GPUParticleEmitter.h" />
     <ClInclude Include="Keyboard.h" />
     <ClInclude Include="Light.h" />
     <ClInclude Include="LPassD.h" />
@@ -155,6 +159,10 @@
     <ClInclude Include="ShadowPass.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="shaders\gpuParticleUpdate_vert.glsl" />
+    <None Include="shaders\gpuParticle_frag.glsl" />
+    <None Include="shaders\gpuParticle_geom.glsl" />
+    <None Include="shaders\gpuParticle_vert.glsl" />
     <None Include="shaders\light_pass_point_frag.glsl" />
     <None Include="shaders\Cpass_frag.glsl" />
     <None Include="shaders\Cpass_vert.glsl" />
