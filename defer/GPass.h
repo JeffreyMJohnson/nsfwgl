@@ -44,7 +44,8 @@ public:
 		}
 		//HACKHACK
 		setUniform("IsTexture", nsfw::UNIFORM::BOOL, &usingTexture);
-		
+		vec3 color = vec3(.75f, .75f, .75f);
+		setUniform("Color", nsfw::UNIFORM::TYPE::FLO3, &color);
 
 		glBindVertexArray(*g.mesh);
 		glDrawElements(GL_TRIANGLES, *g.tris, GL_UNSIGNED_INT, 0);
@@ -61,8 +62,9 @@ public:
 			Particle* particle = &emitter.mParticles[i];
 			//create transform T*R*S
 			modelTransform = glm::translate(particle->position) * glm::scale(glm::vec3(particle->size, particle->size, 1));
-
+			setUniform("Color", nsfw::UNIFORM::TYPE::FLO3, &particle->color.xyz);
 			setUniform("Model", nsfw::UNIFORM::TYPE::MAT4, glm::value_ptr(modelTransform));
+
 			glBindVertexArray(*emitter.mesh);
 			glDrawElements(GL_TRIANGLES, *emitter.tris, GL_UNSIGNED_INT, 0);
 		}

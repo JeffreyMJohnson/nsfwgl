@@ -78,7 +78,7 @@ void DeferredApplication::onPlay()
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
-	mLight->direction = glm::normalize(glm::vec3(0,.75f, 1));
+	mLight->direction = glm::normalize(glm::vec3(0,0,1));
 	mLight->ambientIntensity = 1;
 	mLight->diffuseIntensity = 1;
 	mLight->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
@@ -104,11 +104,11 @@ void DeferredApplication::onPlay()
 	mEmitter->mPosition = glm::vec3(1, 1, 0);
 	mEmitter->Init(
 		100,//max particles
-		10,//emit rate
+		50,//emit rate
 		5, 10,//lifetime min/max
-		1, 10,//velocity min/max
-		1,.5f,//size start/end
-		glm::vec4(1), glm::vec4(1));//color start/end
+		.1,1,//velocity min/max
+		.1f,.01f,//size start/end
+		glm::vec4(1,0,0,1), glm::vec4(1,1,0,1));//color start/end
 
 
 	mSoulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
@@ -135,7 +135,7 @@ void DeferredApplication::onStep()
 	float deltaTime = nsfw::Window::instance().GetDeltaTime();
 
 	mLight->update(deltaTime);
-	mPointLight->Update(deltaTime);
+	//mPointLight->Update(deltaTime);
 	mCamera->Update(nsfw::Window::instance().getTime());
 	UpdateFlyCamControls(deltaTime, moveSpeed);
 	mSoulspear->update();
@@ -146,27 +146,28 @@ void DeferredApplication::onStep()
 
 	//mGeometryPass->draw(*mCamera, *mSoulspear);
 	//mGeometryPass->draw(*mCamera, *mSoulspear2);
-	//mGeometryPass->draw(*mCamera, *mFloor);
+	mGeometryPass->draw(*mCamera, *mFloor);
 	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
 
 	mGeometryPass->post();
 
+	
 	mShadowPass->prep();
-	mShadowPass->draw(*mLight, *mSoulspear);
-	mShadowPass->draw(*mLight, *mSoulspear2);
+	//mShadowPass->draw(*mLight, *mSoulspear);
+	//mShadowPass->draw(*mLight, *mSoulspear2);
 	mShadowPass->draw(*mLight, *mFloor);
-
+	mShadowPass->Draw(*mLight, *mEmitter);
 	mShadowPass->post();
-
+	/**/
 	mDirectionalLightPass->prep();
 	mDirectionalLightPass->draw(*mCamera, *mLight);
 	mDirectionalLightPass->post();
-
+/*
 	mPointLightPass->prep();
 	mPointLightPass->draw(*mCamera, *mPointLight);
 	mPointLightPass->post();
-
+	*/
 	mCompositePass->prep();
 
 	/*
@@ -176,9 +177,9 @@ void DeferredApplication::onStep()
 	set mDebugTexture to texture -> "name of texture asset"; 
 	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
-	//mCompositePass->draw();
-	mDebugTexture = "GPassAlbedo";
-	mCompositePass->DrawDebugTexture(mDebugTexture);
+	mCompositePass->draw();
+	//mDebugTexture = "GPassAlbedo";
+	//mCompositePass->DrawDebugTexture(mDebugTexture);
 
 	mCompositePass->post();
 }
