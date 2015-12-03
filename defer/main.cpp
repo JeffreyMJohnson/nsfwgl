@@ -38,6 +38,8 @@ void DeferredApplication::onInit()
 	a.LoadShader("ShadowPass", "./shaders/ShadowPass_vert.glsl", "./shaders/ShadowPass_frag.glsl");
 	a.LoadShader("LightPassDirectional", "./shaders/Light_pass_directional_vert.glsl", "./shaders/Light_pass_directional_frag.glsl");
 	a.LoadShader("LightPassPoint", "./shaders/light_pass_point_vert.glsl", "./shaders/light_pass_point_frag.glsl");
+	a.LoadShader("ParticlesPass", "./shaders/particle_pass_vert.glsl", "./shaders/particles_pass_frag.glsl");
+
 	a.LoadShader("CompPass", "./shaders/Cpass_vert.glsl", "./shaders/Cpass_frag.glsl");
 
 	mCamera = new Camera;

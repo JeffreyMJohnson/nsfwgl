@@ -103,10 +103,10 @@
     <None Include="shaders\ShadowPass_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="shaders\particle_emitter_frag.glsl">
+    <None Include="shaders\particles_pass_frag.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
-    <None Include="shaders\particle_emitter_vert.glsl">
+    <None Include="shaders\particles_pass_vert.glsl">
       <Filter>Source Files\shaders</Filter>
     </None>
   </ItemGroup>

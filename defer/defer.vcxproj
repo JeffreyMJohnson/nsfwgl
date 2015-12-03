@@ -162,8 +162,8 @@
     <None Include="shaders\Gpass_vert.glsl" />
     <None Include="shaders\Light_pass_directional_frag.glsl" />
     <None Include="shaders\Light_pass_directional_vert.glsl" />
-    <None Include="shaders\particle_emitter_frag.glsl" />
-    <None Include="shaders\particle_emitter_vert.glsl" />
+    <None Include="shaders\particles_pass_frag.glsl" />
+    <None Include="shaders\particles_pass_vert.glsl" />
     <None Include="shaders\ShadowPass_frag.glsl" />
     <None Include="shaders\ShadowPass_vert.glsl" />
   </ItemGroup>
