@@ -92,6 +92,12 @@ void GPUParticleEmitter::Draw(float time, const glm::mat4 & a_cameraTransform, c
 	location = glGetUniformLocation(mDrawShader, "cameraTransform");
 	glUniformMatrix4fv(location, 1, false, &a_cameraTransform[0][0]);
 
+	location = glGetUniformLocation(mDrawShader, "myTexture");
+	glUniform1i(location, 0);
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, nsfw::Assets::instance().get<nsfw::ASSET::TEXTURE>("soulspear_diffuse.tga"));
+	glBindTexture(GL_TEXTURE_2D, nsfw::Assets::instance().get<nsfw::ASSET::TEXTURE>("ParticleTexture"));
+
 	//draw particles
 	glBindVertexArray(mVAO[otherBuffer]);
 	glDrawArrays(GL_POINTS, 0, mMaxParticles);
@@ -227,6 +233,18 @@ unsigned int GPUParticleEmitter::LoadShader(unsigned int type, const char * path
 	unsigned int shader = glCreateShader(type);
 	glShaderSource(shader, 1, &source, 0);
 	glCompileShader(shader);
+	GLint success = GL_FALSE;
+	glGetShaderiv(shader, GL_COMPILE_STATUS, &success);
+	if (success == GL_FALSE)
+	{
+		int length = 0;
+		glGetShaderiv(shader, GL_INFO_LOG_LENGTH, &length);
+		char* log = new char[length];
+		glGetShaderInfoLog(shader, length, 0, log);
+		std::cout << "Error compiling shader.\n" << log << std::endl;
+		delete[] log;
+		assert(false);
+	}
 	delete[] source;
 
 	return shader;

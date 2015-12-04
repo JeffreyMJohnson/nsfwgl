@@ -30,7 +30,7 @@ float rand(uint seed, float range)
 void main()
 {
 	position = Position + Velocity * deltaTime;
-	velocity = Velocity;
+	velocity = Velocity + vec3(0,1, 0) * -.01f;
 	lifetime = Lifetime + deltaTime;
 	lifespan = Lifespan;
 	

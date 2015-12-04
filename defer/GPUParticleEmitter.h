@@ -29,6 +29,9 @@ public:
 
 	void Draw(float time, const glm::mat4& a_cameraTransform, const glm::mat4& a_projectionView);
 
+	void SetPosition(glm::vec3 a_position) { mPosition = a_position; }
+	glm::vec3 GetPosition() { return mPosition; }
+
 protected:
 
 	void CreateBuffers();

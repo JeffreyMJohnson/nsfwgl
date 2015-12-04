@@ -66,6 +66,8 @@ void DeferredApplication::onInit()
 	a.LoadFBX("Soulspear", "./resources/models/soulspear/soulspear.fbx");
 	//a.loadOBJ("Bunny", "./resources/models/bunny/bunny.obj");
 
+	a.LoadTexture("ParticleTexture", "./resources/textures/rainbowNoise.jpg");
+	//a.LoadTexture("ParticleTexture", "./resources/textures/aidan.png");
 
 }
 
@@ -81,7 +83,7 @@ void DeferredApplication::onPlay()
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
-	mLight->direction = glm::normalize(glm::vec3(0,0,1));
+	mLight->direction = glm::normalize(glm::vec3(0,1,1));
 	mLight->ambientIntensity = 1;
 	mLight->diffuseIntensity = 1;
 	mLight->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
@@ -105,10 +107,11 @@ void DeferredApplication::onPlay()
 	mEmitter->Init(
 		1000000,//max particles
 		.1f, 5.0f,//lifespan min/max
-		5,20,//velocity min/max
+		1,10,//velocity min/max
 		1, 0.1f,//size start/end
 		glm::vec4(1,0,0,1), glm::vec4(1,1,0,1));//color start/end
-
+	
+	mEmitter->SetPosition(glm::vec3(0, 10, 0));
 
 	mSoulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	mSoulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
@@ -141,8 +144,8 @@ void DeferredApplication::onStep()
 	//mBunny->update();
 	mGeometryPass->prep();
 
-	//mGeometryPass->draw(*mCamera, *mSoulspear);
-	//mGeometryPass->draw(*mCamera, *mSoulspear2);
+	mGeometryPass->draw(*mCamera, *mSoulspear);
+	mGeometryPass->draw(*mCamera, *mSoulspear2);
 	mGeometryPass->draw(*mCamera, *mFloor);
 	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
@@ -151,11 +154,11 @@ void DeferredApplication::onStep()
 
 	
 	mShadowPass->prep();
-	//mShadowPass->draw(*mLight, *mSoulspear);
-	//mShadowPass->draw(*mLight, *mSoulspear2);
+	mShadowPass->draw(*mLight, *mSoulspear);
+	mShadowPass->draw(*mLight, *mSoulspear2);
 	mShadowPass->draw(*mLight, *mFloor);
 	mShadowPass->post();
-	/**/
+	
 	mDirectionalLightPass->prep();
 	mDirectionalLightPass->draw(*mCamera, *mLight);
 	mDirectionalLightPass->post();
@@ -173,9 +176,9 @@ void DeferredApplication::onStep()
 	set mDebugTexture to texture -> "name of texture asset"; 
 	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
-	//mCompositePass->draw();
-	mDebugTexture = "GPassAlbedo";
-	mCompositePass->DrawDebugTexture(mDebugTexture);
+	mCompositePass->draw();
+	//mDebugTexture = "GPassAlbedo";
+	//mCompositePass->DrawDebugTexture(mDebugTexture);
 
 	mCompositePass->post();
 }
