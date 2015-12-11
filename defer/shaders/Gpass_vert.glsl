@@ -9,7 +9,9 @@ layout(location = 3) in vec2 TexCoord;
 out vec4 vPosition;
 out vec4 vNormal;
 out vec2 vTexCoord;
-out mat4 vTBN;
+out vec4 vTangent;
+out vec4 vBiTangent;
+//out mat4 vTBN;
 
 uniform mat4 Projection;
 uniform mat4 View;
@@ -21,9 +23,8 @@ void main()
 {
 	vPosition = View * Model * Position;
 	vNormal = normalize(View * Model * Normal);
-vec4 biNormal = vec4(normalize(cross(Normal.xyz, Tangent.xyz)), 0);
-		vTBN = mat4(Tangent, biNormal, Normal, vec4(0, 0, 0, 1));
-		vTBN = View * Model * vTBN;
+	vTangent = normalize(View * Model * Tangent);
+	vBiTangent = vec4(cross(vNormal.xyz, vTangent.xyz),0);
 
 	vTexCoord = TexCoord;
 

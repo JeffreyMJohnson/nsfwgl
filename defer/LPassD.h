@@ -6,8 +6,8 @@
 class LPassD : public nsfw::RenderPass
 {
 	nsfw::Asset<nsfw::ASSET::TEXTURE> position, normal, ShadowMap;
-	glm::vec3 ambientLight = vec3(.25f,.25f,.25f );
-	float specPower = 128;
+	glm::vec3 ambientLight = vec3(0 );
+	float specPower = 1;
 	glm::mat4 textureSpaceOffset = glm::mat4(0.5f, 0.0f, 0.0f, 0.0f,
 											 0.0f, 0.5f, 0.0f, 0.0f,
 											 0.0f, 0.0f, 0.5f, 0.0f,
@@ -47,6 +47,7 @@ public:
 
 		setUniform("CameraPosition", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(c.GetPosition()));
 		setUniform("CameraView", nsfw::UNIFORM::MAT4, glm::value_ptr(c.GetView()));
+
 		setUniform("SpecPower", nsfw::UNIFORM::TYPE::FLO1, &specPower);
 		setUniform("AmbientColor", nsfw::UNIFORM::TYPE::FLO3, glm::value_ptr(ambientLight));
 		setUniform("PositionMap", nsfw::UNIFORM::TEX2, position, 0);
