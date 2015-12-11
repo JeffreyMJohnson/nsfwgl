@@ -85,7 +85,7 @@ void DeferredApplication::onPlay()
 
 	//directional light
 	mLight->color = glm::vec3(1, 1, 1);
-	mLight->direction = glm::normalize(glm::vec3(0,1,1));
+	mLight->direction = glm::normalize(glm::vec3(0, 1, 1));
 	mLight->ambientIntensity = 1;
 	mLight->diffuseIntensity = 1;
 	mLight->projection = glm::ortho<float>(-20, 20, -20, 20, -20, 20);
@@ -93,7 +93,7 @@ void DeferredApplication::onPlay()
 
 	//point light
 	mPointLight->color = glm::vec3(1, 1, 0);
-	mPointLight->position = glm::vec4(0, 2, 2, 1);
+	mPointLight->position = glm::vec4(0, 3, 1, 1);
 	mPointLight->attenuation.kC = 0;
 
 	mSoulspear->mesh = "SoulSpear_Low:SoulSpear_Low1";
@@ -102,7 +102,7 @@ void DeferredApplication::onPlay()
 	mSoulspear->normal = "soulspear_normal.tga";
 
 	mSoulspear->specPower = 40.0f;
-	mSoulspear->transform = translate(0,3,0);
+	mSoulspear->transform = translate(0, 3, 0);
 
 	mFloor->mesh = "Quad";
 	mFloor->tris = "Quad";
@@ -112,17 +112,17 @@ void DeferredApplication::onPlay()
 	mEmitter->Init(
 		10000,//max particles
 		.1f, 1.0f,//lifespan min/max
-		1,6,//velocity min/max
+		1, 6,//velocity min/max
 		1, 0.1f,//size start/end
-		glm::vec4(1,0,0,1), glm::vec4(1,1,0,1));//color start/end
-	
+		glm::vec4(1, 0, 0, 1), glm::vec4(1, 0, 0, 1));//color start/end
+
 	mEmitter->SetPosition(glm::vec3(0, 2, 0));
 
 	mSoulspear2->mesh = "SoulSpear_Low:SoulSpear_Low1";
 	mSoulspear2->tris = "SoulSpear_Low:SoulSpear_Low1";
 	mSoulspear2->diffuse = "soulspear_diffuse.tga";
 	mSoulspear2->specPower = 128.0f;
-	mSoulspear2->transform = translate(-5, 0,0);
+	mSoulspear2->transform = translate(-5, 0, 0);
 	mSoulspear2->normal = "";
 
 	mBunny->mesh = "Bunny";
@@ -165,7 +165,7 @@ void DeferredApplication::onStep()
 	mGeometryPass->draw(*mCamera, *mFloor);
 	mGeometryPass->Draw(*mCamera, *mEmitter);
 	//mGeometryPass->draw(*mCamera, *mBunny);
-	
+
 	mGeometryPass->post();
 
 	mShadowPass->prep();
@@ -181,14 +181,14 @@ void DeferredApplication::onStep()
 	mPointLightPass->prep();
 	mPointLightPass->draw(*mCamera, *mPointLight);
 	mPointLightPass->post();
-	*/
+*/
 	mCompositePass->prep();
 
 	/*
 	DEBUG
-	to send single texture to the screen: 
-	comment out -> mCompositePass->draw(); 
-	set mDebugTexture to texture -> "name of texture asset"; 
+	to send single texture to the screen:
+	comment out -> mCompositePass->draw();
+	set mDebugTexture to texture -> "name of texture asset";
 	call mCompositePass->DrawDebugTexture(mDebugTexture);
 	*/
 	mCompositePass->draw();
