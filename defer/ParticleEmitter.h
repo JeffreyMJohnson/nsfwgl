@@ -99,7 +99,7 @@ public:
 		//resurrect it
 		Particle* newParticle = &mParticles[mFirstDead++];
 
-		//start position is with the emitter
+		//start position is with the emitter hotdog
 		newParticle->position = mPosition;
 
 		//set velocity to random value

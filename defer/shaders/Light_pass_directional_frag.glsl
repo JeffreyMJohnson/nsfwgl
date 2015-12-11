@@ -31,6 +31,8 @@ uniform sampler2D ShadowMap;
 uniform float ShadowBias = .01;
 uniform vec2 ShadowMapSize = vec2(1280, 720);
 
+uniform bool UseLighting = true;
+
 float Texture2DCompare(sampler2D depths, vec2 uv, float compare)
 {
 	float depth = texture2D(depths, uv).r;
@@ -104,9 +106,16 @@ void main()
 	vec3 R = reflect(-lightDirection, normal);//reflection vector
 	float s = pow(max(dot(E, R), 0), SpecPower);//specular
 
-	vec2 UVCoords;
 	float foo = d + visibility;
 
-	LightOutput = AmbientColor + (Directional.Color * foo) + (Directional.Color * s);
+	if (UseLighting)
+	{
+		LightOutput = AmbientColor + (Directional.Color * foo) + (Directional.Color * s);
+	}
+	else
+	{
+		LightOutput = AmbientColor;
+	}
+
 
 }

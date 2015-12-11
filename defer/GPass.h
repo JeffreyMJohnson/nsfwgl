@@ -13,10 +13,10 @@ public:
 
 	void prep()
 	{
-		
+
 		glBindFramebuffer(GL_FRAMEBUFFER, *fbo);
 		glEnable(GL_DEPTH_TEST);
-		glClearColor(0,0,0,0);
+		glClearColor(0, 0, 0, 0);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		glUseProgram(*shader);
 	}
@@ -42,8 +42,18 @@ public:
 			setUniform("Diffuse", nsfw::UNIFORM::TEX2, g.diffuse, 0);
 			usingTexture = true;
 		}
+
+		bool usingNormalMap = false;
+		if (g.normal.name != "")
+		{
+
+			setUniform("NormalMap", nsfw::UNIFORM::TEX2, g.normal, 1);
+			usingNormalMap = true;
+		}
+
 		//HACKHACK
 		setUniform("IsTexture", nsfw::UNIFORM::BOOL, &usingTexture);
+		setUniform("useNormalMap", nsfw::UNIFORM::BOOL, &usingNormalMap);
 		vec3 color = vec3(.75f, .75f, .75f);
 		setUniform("Color", nsfw::UNIFORM::TYPE::FLO3, &color);
 

@@ -290,6 +290,7 @@ bool nsfw::Assets::LoadFBX(const char * name, const char * path)
 			Vertex v;
 			v.position = xVert.position;
 			v.normal = xVert.normal;
+			v.tangent = xVert.tangent;
 			v.texCoord = xVert.texCoord1;
 			vertices.push_back(v);
 		}

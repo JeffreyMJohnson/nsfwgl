@@ -4,6 +4,7 @@
 class ShadowPass : public nsfw::RenderPass
 {
 public:
+
 	ShadowPass(const char *shaderName, const char *fboName) :
 		RenderPass(shaderName, fboName) {}
 	void prep()
@@ -27,6 +28,7 @@ public:
 	{
 		setUniform("LightMatrix", nsfw::UNIFORM::MAT4, glm::value_ptr(light.projection * light.view));
 		setUniform("Model", nsfw::UNIFORM::MAT4, glm::value_ptr(geometry.transform));
+		
 
 		//draw shadow-casting geometry
 		glBindVertexArray(*geometry.mesh);
